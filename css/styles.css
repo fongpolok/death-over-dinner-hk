@@ -65,6 +65,7 @@ h1, h2, h3, h4 {
 h1 { font-size: clamp(2rem, 5vw, 3.4rem); letter-spacing: -0.01em; }
 h2 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); }
 h3 { font-size: clamp(1.15rem, 2.5vw, 1.5rem); }
+h4 { font-size: 1rem; margin-top: var(--space-3); }
 p { margin: 0 0 var(--space-2); max-width: 70ch; }
 
 a { color: var(--blue); text-underline-offset: 0.2em; }
@@ -111,7 +112,7 @@ a:hover { color: var(--blue-dark); }
   padding: 0 var(--space-3);
 }
 
-section { padding: var(--space-5) 0; }
+section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 .section-alt { background: var(--paper-alt); }
 .section-dark {
   background: var(--navy-dark);
@@ -227,6 +228,7 @@ section { padding: var(--space-5) 0; }
 /* Every button is rendered as a rubber ink stamp: a slightly rotated
    rounded plate whose edge is roughened by the shared #stampRough SVG
    filter (feTurbulence + displacementMap, defined once in index.html). */
+.btn[hidden] { display: none; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
   min-height: 48px;
@@ -583,6 +585,30 @@ section { padding: var(--space-5) 0; }
   padding: var(--space-2);
   font-size: 0.95rem;
   color: var(--ink-soft);
+}
+
+/* A quieter object than .note-box: one of the source document's longer
+   questions, set as something to read rather than an instruction to act
+   on — the wizard's own "guide the host to think" mechanism. */
+.reflection-prompt {
+  border-top: 1px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
+  padding: var(--space-2) 0;
+  margin-bottom: var(--space-3);
+}
+.reflection-prompt .reflection-kicker {
+  display: block;
+  font-family: var(--font-type);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+  margin-bottom: 0.35rem;
+}
+.reflection-prompt p {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--ink-soft);
+  margin: 0;
 }
 
 .choice-grid {

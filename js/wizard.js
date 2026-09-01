@@ -1,20 +1,30 @@
 /* The step-by-step wizard: state, rendering, validation and the
    invitation-letter generator. Presentation-only concerns (WhatsApp share,
    clipboard, logging) live in whatsapp.js so this file stays focused on
-   "what step are we on and is it valid". */
+   "what step are we on and is it valid".
+
+   Flow (deliberately not deathoverdinner.org's "pick a menu, get your
+   cards" order): the host is asked WHY before anything else, then walks
+   five life-and-death themes in turn — reading one of the source
+   document's deeper questions as a private prompt, then optionally
+   choosing a few shorter cards for the table — and only at the very end
+   decides WHO is actually coming and when. */
 window.DOD = window.DOD || {};
 
 (function () {
-  var TOTAL_STEPS = 7;
+  var TOTAL_STEPS = 8;
+  var THEME_STEP_START = 2; // steps 2-6 are the five theme groups
+  var THEME_STEP_END = 6;
+  var GUEST_STEP = 7;
+  var REVIEW_STEP = 8;
 
   var state = {
     step: 1,
-    guestTypes: new Set(),
     intent: null,
-    template: null,
-    templateManual: false,
-    tone: null,
+    privateNote: "", // never sent anywhere; the host's own reflection
     cards: new Set(),
+    guestTypes: new Set(),
+    tone: null,
     hostName: "",
     dinnerTitle: "",
     date: "",
@@ -29,26 +39,38 @@ window.DOD = window.DOD || {};
     return window.DOD.t(key, vars);
   }
 
-  function recommendedTemplate() {
-    var intent = window.DOD.DATA.intents.find(function (i) { return i.id === state.intent; });
-    return intent ? intent.recommends : "legacy";
+  function themeGroups() {
+    return window.DOD.DATA.cardGroups;
   }
 
-  function currentTemplateId() {
-    return state.templateManual ? state.template : recommendedTemplate();
+  function themeGroupForStep(step) {
+    return themeGroups()[step - THEME_STEP_START];
+  }
+
+  /* The dinner's overall register is derived from what the host actually
+     spent time on, not chosen up front from a menu: any pick from the
+     medical/dignity theme marks the whole dinner as touching that
+     territory, otherwise it defaults to the gentler legacy register. A
+     custom dinner title (set in the final step) always overrides the
+     displayed name regardless of this. */
+  function deriveTemplateId() {
+    var medical = themeGroups().filter(function (g) { return g.id === "medical"; })[0];
+    if (medical && medical.cards.some(function (c) { return state.cards.has(c.id); })) {
+      return "acp";
+    }
+    return "legacy";
   }
 
   // ---- Validation -----------------------------------------------------
 
   function isStepValid(step) {
     switch (step) {
-      case 1: return state.guestTypes.size > 0;
-      case 2: return !!state.intent;
-      case 3: return !!currentTemplateId();
-      case 4: return !!state.tone;
-      case 5: return state.cards.size >= 3 && state.cards.size <= 5;
-      case 6: return !!state.hostName.trim() && !!state.date && !!state.time;
-      default: return true;
+      case 1: return !!state.intent;
+      case THEME_STEP_END: return state.cards.size >= 3 && state.cards.size <= 5;
+      case GUEST_STEP:
+        return state.guestTypes.size > 0 && !!state.tone &&
+          !!state.hostName.trim() && !!state.date && !!state.time;
+      default: return true; // the other theme steps are opt-in, not gated
     }
   }
 
@@ -76,8 +98,7 @@ window.DOD = window.DOD || {};
     lines.push("");
     lines.push(t("letter.intro." + state.tone));
     lines.push("");
-    var tpl = window.DOD.DATA.templates.find(function (x) { return x.id === currentTemplateId(); });
-    var templateLabel = state.dinnerTitle.trim() || t(tpl.name);
+    var templateLabel = state.dinnerTitle.trim() || t("templates." + deriveTemplateId() + ".name");
     lines.push(t("letter.templateNote", { template: templateLabel }));
     lines.push("");
     lines.push(t("letter.detailsIntro"));
@@ -122,103 +143,97 @@ window.DOD = window.DOD || {};
     container.appendChild(list);
   }
 
+  function renderReflection(container, reflectionI18nKey) {
+    container.appendChild(el("div", { class: "reflection-prompt" }, [
+      el("span", { class: "reflection-kicker", text: t("theme.reflectionKicker") }),
+      el("p", { text: t(reflectionI18nKey) })
+    ]));
+  }
+
+  /* Shared renderer for the five theme steps (2-6): a reflection to read,
+     then this theme's cards to optionally choose from. Validation for the
+     whole set lives on the last theme step (see isStepValid). */
+  function renderThemeStep(container, group) {
+    container.appendChild(el("h3", { id: "step-heading", tabindex: "-1", text: t(group.titleI18n) }));
+    container.appendChild(el("p", { class: "step-subtitle", text: t("theme.subtitle", { picked: state.cards.size }) }));
+    renderReflection(container, group.reflectionI18n);
+    if (group.needsReview) {
+      container.appendChild(el("span", { class: "badge badge-warning", text: t("step5.acpBadge") }));
+    }
+    renderChoiceList(container, group.cards, {
+      type: "checkbox", name: "card-" + group.id, selectedSet: state.cards,
+      groupLabel: t(group.titleI18n),
+      onChange: function (id, checked) {
+        if (checked) {
+          if (state.cards.size >= 5) {
+            var input = document.getElementById("card-" + group.id + "-" + id);
+            if (input) input.checked = false;
+            announce(t("theme.cardsMax"));
+            return;
+          }
+          state.cards.add(id);
+        } else {
+          state.cards.delete(id);
+        }
+        refreshNav();
+        var subtitle = els.content.querySelector(".step-subtitle");
+        if (subtitle) subtitle.textContent = t("theme.subtitle", { picked: state.cards.size });
+      }
+    });
+  }
+
   var stepRenderers = {
     1: function (container) {
-      container.appendChild(el("h3", { id: "step-heading", tabindex: "-1", "data-i18n": "step1.title", text: t("step1.title") }));
-      container.appendChild(el("p", { class: "step-subtitle", "data-i18n": "step1.subtitle", text: t("step1.subtitle") }));
+      container.appendChild(el("h3", { id: "step-heading", tabindex: "-1", text: t("step1.title") }));
+      container.appendChild(el("p", { class: "step-subtitle", text: t("step1.subtitle") }));
+      renderChoiceList(container, window.DOD.DATA.intents, {
+        type: "radio", name: "intent", selectedValue: state.intent,
+        groupLabel: t("step1.title"),
+        onChange: function (id) { state.intent = id; refreshNav(); }
+      });
+      container.appendChild(el("p", { class: "note-box", text: t("step1.crisisNote") }));
+
+      container.appendChild(el("div", { class: "reflection-prompt" }, [
+        el("span", { class: "reflection-kicker", text: t("theme.reflectionKicker") }),
+        el("p", { text: t("step1.reflectionPrompt") })
+      ]));
+      var noteId = "field-privateNote";
+      container.appendChild(el("label", { for: noteId, class: "field-label", text: t("step1.reflectionLabel") }));
+      var textarea = el("textarea", { id: noteId, rows: "4", class: "letter-textarea", placeholder: t("step1.reflectionPlaceholder") });
+      textarea.value = state.privateNote;
+      textarea.addEventListener("input", function () { state.privateNote = textarea.value; });
+      container.appendChild(textarea);
+      container.appendChild(el("p", { class: "muted small", text: t("step1.reflectionNote") }));
+    },
+
+    2: function (container) { renderThemeStep(container, themeGroupForStep(2)); },
+    3: function (container) { renderThemeStep(container, themeGroupForStep(3)); },
+    4: function (container) { renderThemeStep(container, themeGroupForStep(4)); },
+    5: function (container) { renderThemeStep(container, themeGroupForStep(5)); },
+    6: function (container) { renderThemeStep(container, themeGroupForStep(6)); },
+
+    7: function (container) {
+      container.appendChild(el("h3", { id: "step-heading", tabindex: "-1", text: t("step7.title") }));
+      container.appendChild(el("p", { class: "step-subtitle", text: t("step7.subtitle") }));
+
+      container.appendChild(el("h4", { text: t("step7.guestsHeading") }));
       renderChoiceList(container, window.DOD.DATA.guestTypes, {
         type: "checkbox", name: "guestType", selectedSet: state.guestTypes,
-        groupLabel: t("step1.title"),
+        groupLabel: t("step7.guestsHeading"),
         onChange: function (id, checked) {
           if (checked) state.guestTypes.add(id); else state.guestTypes.delete(id);
           refreshNav();
         }
       });
-    },
-    2: function (container) {
-      container.appendChild(el("h3", { id: "step-heading", tabindex: "-1", text: t("step2.title") }));
-      container.appendChild(el("p", { class: "step-subtitle", text: t("step2.subtitle") }));
-      renderChoiceList(container, window.DOD.DATA.intents, {
-        type: "radio", name: "intent", selectedValue: state.intent,
-        groupLabel: t("step2.title"),
-        onChange: function (id) { state.intent = id; refreshNav(); }
-      });
-      container.appendChild(el("p", { class: "note-box", text: t("step2.crisisNote") }));
-    },
-    3: function (container) {
-      container.appendChild(el("h3", { id: "step-heading", tabindex: "-1", text: t("step3.title") }));
-      container.appendChild(el("p", { class: "step-subtitle", text: t("step3.subtitle") }));
-      var rec = recommendedTemplate();
-      var grid = el("div", { class: "template-grid", role: "radiogroup", "aria-label": t("step3.title") });
-      window.DOD.DATA.templates.forEach(function (tpl) {
-        var id = "template-" + tpl.id;
-        var input = el("input", { type: "radio", id: id, name: "template", value: tpl.id });
-        if (currentTemplateId() === tpl.id) input.setAttribute("checked", "checked");
-        input.addEventListener("change", function () {
-          state.template = tpl.id;
-          state.templateManual = true;
-          refreshNav();
-        });
-        var badge = (!state.templateManual && tpl.id === rec)
-          ? el("span", { class: "badge", text: t("step3.recommendedBadge") })
-          : null;
-        var card = el("label", { for: id, class: "template-card" }, [
-          input,
-          el("strong", { text: t(tpl.name) }),
-          el("p", { text: t(tpl.purpose) }),
-          el("p", { class: "muted", text: t(tpl.fit) }),
-          el("p", { class: "muted", text: t(tpl.intensity) }),
-          badge
-        ]);
-        grid.appendChild(card);
-      });
-      container.appendChild(grid);
-    },
-    4: function (container) {
-      container.appendChild(el("h3", { id: "step-heading", tabindex: "-1", text: t("step4.title") }));
-      container.appendChild(el("p", { class: "step-subtitle", text: t("step4.subtitle") }));
+
+      container.appendChild(el("h4", { text: t("step7.toneHeading") }));
       renderChoiceList(container, window.DOD.DATA.tones, {
         type: "radio", name: "tone", selectedValue: state.tone,
-        groupLabel: t("step4.title"),
+        groupLabel: t("step7.toneHeading"),
         onChange: function (id) { state.tone = id; refreshNav(); }
       });
-    },
-    5: function (container) {
-      container.appendChild(el("h3", { id: "step-heading", tabindex: "-1", text: t("step5.title") }));
-      container.appendChild(el("p", { class: "step-subtitle", text: t("step5.subtitle") }));
-      window.DOD.DATA.cardGroups.forEach(function (group) {
-        var groupWrap = el("fieldset", { class: "card-group" });
-        groupWrap.appendChild(el("legend", { text: t(group.titleI18n) }));
-        if (group.needsReview) {
-          groupWrap.appendChild(el("span", { class: "badge badge-warning", text: t("step5.acpBadge") }));
-        }
-        var list = el("div", { class: "choice-grid" });
-        group.cards.forEach(function (card) {
-          var id = "card-" + card.id;
-          var input = el("input", { type: "checkbox", id: id, name: "card", value: card.id });
-          if (state.cards.has(card.id)) input.setAttribute("checked", "checked");
-          input.addEventListener("change", function () {
-            if (input.checked) {
-              if (state.cards.size >= 5) {
-                input.checked = false;
-                announce(t("step5.error"));
-                return;
-              }
-              state.cards.add(card.id);
-            } else {
-              state.cards.delete(card.id);
-            }
-            refreshNav();
-          });
-          list.appendChild(el("label", { for: id, class: "choice-card" }, [input, el("span", { text: t(card.i18n) })]));
-        });
-        groupWrap.appendChild(list);
-        container.appendChild(groupWrap);
-      });
-    },
-    6: function (container) {
-      container.appendChild(el("h3", { id: "step-heading", tabindex: "-1", text: t("step6.title") }));
-      container.appendChild(el("p", { class: "step-subtitle", text: t("step6.subtitle") }));
+
+      container.appendChild(el("h4", { text: t("step7.detailsHeading") }));
       var form = el("div", { class: "field-grid" });
 
       function textField(fieldId, labelKey, phKey, value, required, onInput, type) {
@@ -241,25 +256,26 @@ window.DOD = window.DOD || {};
       form.appendChild(textField("guests", "field.guests", "field.guests.ph", state.guestNames, false, function (v) { state.guestNames = v; }));
       container.appendChild(form);
     },
-    7: function (container) {
-      container.appendChild(el("h3", { id: "step-heading", tabindex: "-1", text: t("step7.title") }));
-      container.appendChild(el("p", { class: "step-subtitle", text: t("step7.subtitle") }));
+
+    8: function (container) {
+      container.appendChild(el("h3", { id: "step-heading", tabindex: "-1", text: t("step8.title") }));
+      container.appendChild(el("p", { class: "step-subtitle", text: t("step8.subtitle") }));
       var textareaId = "letter-text";
-      container.appendChild(el("label", { for: textareaId, class: "field-label", text: t("step7.letterLabel") }));
+      container.appendChild(el("label", { for: textareaId, class: "field-label", text: t("step8.letterLabel") }));
       var textarea = el("textarea", { id: textareaId, rows: "12", class: "letter-textarea" });
       textarea.value = buildLetter();
       container.appendChild(textarea);
-      container.appendChild(el("p", { class: "note-box", text: t("step7.principleNote") }));
+      container.appendChild(el("p", { class: "note-box", text: t("step8.principleNote") }));
 
       var actions = el("div", { class: "letter-actions" });
-      var waBtn = el("button", { type: "button", class: "btn btn-primary", id: "btn-send-whatsapp", text: t("step7.sendWhatsapp") });
-      var copyBtn = el("button", { type: "button", class: "btn btn-secondary", id: "btn-copy-text", text: t("step7.copyText") });
+      var waBtn = el("button", { type: "button", class: "btn btn-primary", id: "btn-send-whatsapp", text: t("step8.sendWhatsapp") });
+      var copyBtn = el("button", { type: "button", class: "btn btn-secondary", id: "btn-copy-text", text: t("step8.copyText") });
       var status = el("span", { id: "send-status", class: "send-status", role: "status", "aria-live": "polite" });
       actions.appendChild(waBtn);
       actions.appendChild(copyBtn);
       actions.appendChild(status);
       container.appendChild(actions);
-      container.appendChild(el("p", { class: "muted small", text: t("step7.logNote") }));
+      container.appendChild(el("p", { class: "muted small", text: t("step8.logNote") }));
 
       window.DOD.wireSendActions({
         getText: function () { return textarea.value; },
@@ -272,13 +288,14 @@ window.DOD = window.DOD || {};
   };
 
   function buildSubmissionPayload() {
+    // state.privateNote is deliberately excluded: it's the host's own
+    // reflection, never logged and never sent.
     return {
-      guestTypes: Array.from(state.guestTypes),
       intent: state.intent,
-      template: currentTemplateId(),
-      templateManual: state.templateManual,
-      tone: state.tone,
+      template: deriveTemplateId(),
       cards: Array.from(state.cards),
+      guestTypes: Array.from(state.guestTypes),
+      tone: state.tone,
       hostName: state.hostName,
       dinnerTitle: state.dinnerTitle,
       date: state.date,
@@ -313,7 +330,7 @@ window.DOD = window.DOD || {};
     }
     els.backBtn.hidden = state.step === 1;
     els.nextBtn.hidden = state.step === TOTAL_STEPS;
-    els.nextBtn.textContent = state.step === 6 ? t("wizard.finish") : t("wizard.next");
+    els.nextBtn.textContent = state.step === TOTAL_STEPS - 1 ? t("wizard.finish") : t("wizard.next");
     refreshNav();
     // preventScroll: focusing the heading should announce the step to
     // screen readers without hijacking scroll position -- most notably on
