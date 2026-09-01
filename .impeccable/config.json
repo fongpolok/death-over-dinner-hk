@@ -1,0 +1,69 @@
+{
+  "buildPath": "comp",
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-radius",
+        "value": "999px",
+        "createdAt": "2026-08-31T13:50:27.881Z",
+        "reason": "Claude: scrollbar-thumb pill (frontend/css/styles.css:76) is native browser chrome theming, not a card/button corner — the documented small-radius doctrine governs content shapes, not the scrollbar."
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#000",
+        "createdAt": "2026-08-31T13:50:27.910Z",
+        "reason": "Claude: only appears as mask-image radial-gradient stops (frontend/css/styles.css:132,143,146,149) defining perforation cutout alpha, never painted on screen — not a palette color."
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(0,0,0,0.25)",
+        "createdAt": "2026-08-31T13:50:27.940Z",
+        "reason": "Claude: box-shadow value, already documented by name (stamp-press family) in DESIGN.md Elevation & Depth / design.json shadows — shadows aren't palette swatches."
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(25,20,10,0.08)",
+        "createdAt": "2026-08-31T13:50:27.969Z",
+        "reason": "Claude: box-shadow value (note-card lift), already documented in DESIGN.md Elevation & Depth / design.json shadows."
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(25,20,10,0.35)",
+        "createdAt": "2026-08-31T13:50:27.997Z",
+        "reason": "Claude: box-shadow value (safety-card pin), already documented in DESIGN.md Elevation & Depth / design.json shadows."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "0.8rem",
+        "createdAt": "2026-08-31T13:52:37.829Z",
+        "reason": "Claude: .brand-sub (styles.css:172) is the postmark role's header-subtitle step, documented in DESIGN.md Typography as one of the role's several concrete sizes — Stitch's single-value fontSize field can't hold a multi-step token."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "0.55rem",
+        "createdAt": "2026-08-31T13:52:37.868Z",
+        "reason": "Claude: .postal-stamp desktop step of the postmark role, documented in DESIGN.md Typography."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "0.58rem",
+        "createdAt": "2026-08-31T13:52:37.905Z",
+        "reason": "Claude: .airmail-stamp current step of the postmark role, documented in DESIGN.md Typography."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "0.5rem",
+        "createdAt": "2026-08-31T13:52:37.937Z",
+        "reason": "Claude: .airmail-stamp mobile step of the postmark role, documented in DESIGN.md Typography."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "0.46rem",
+        "createdAt": "2026-08-31T13:52:37.968Z",
+        "reason": "Claude: .postal-stamp mobile step of the postmark role, documented in DESIGN.md Typography."
+      }
+    ]
+  }
+}

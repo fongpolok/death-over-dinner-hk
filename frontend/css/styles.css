@@ -1,0 +1,651 @@
+/* ==========================================================================
+   生死晚餐 Death Over Dinner — "Airborne Letters"
+   World: Hong Kong par-avion correspondence. The site reads as one letter
+   finally being sent — onion-skin paper, airmail red/blue chevron borders,
+   ink-stamp controls, typewritten postal marks. See the direction contract
+   at the top of index.html's <body> for the full brief.
+
+   Colour pairings below are chosen and contrast-checked (WCAG AA, >=4.5:1
+   for normal text, >=3:1 for large text) against the specific background
+   they're used on — don't swap one half of a pair without re-checking the
+   other. (paper #f4efe1 / ink #2b2620: ~14.7:1. white / red #b1272d:
+   6.6:1. white / blue #1a3e72: 10.6:1. red-text / paper: 5.7:1. blue-text
+   / paper: 9.2:1. paper-text / navy-dark: >13:1.)
+   ========================================================================== */
+:root {
+  --paper: #f4efe1;          /* onion-skin ground */
+  --paper-alt: #ebe0c7;      /* deeper aged paper, section banding */
+  --paper-white: #fbf8f0;    /* lightest sheet, wizard desk */
+  --ink: #2b2620;            /* primary text on paper */
+  --ink-soft: #55493c;       /* secondary text on paper, tinted from ink */
+  --red: #b1272d;            /* airmail red — primary accent / CTA / stamps */
+  --red-dark: #8a1e23;
+  --blue: #1a3e72;           /* airmail blue — secondary accent / links / stamps */
+  --blue-dark: #122c52;
+  --navy-dark: #191f34;      /* night-post sky — dark section background */
+  --navy-text: #f4efe1;      /* text on navy */
+  --brass: #a9812f;          /* decorative accent only — grommets, seals */
+  --line: #d9c8a3;           /* torn-paper / stitch line */
+
+  --font-body: "Noto Sans HK", "PingFang HK", "Microsoft JhengHei", -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Noto Serif HK", "PingFang HK", Georgia, serif;
+  --font-type: "Special Elite", "Courier New", monospace; /* postmarks, numerals, small English marks */
+
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2.5rem;
+  --space-5: 4rem;
+  --max-width: 72rem;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--paper);
+  line-height: 1.65;
+  font-size: 1.0625rem;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  line-height: 1.25;
+  margin: 0 0 var(--space-2);
+}
+h1 { font-size: clamp(2rem, 5vw, 3.4rem); letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); }
+h3 { font-size: clamp(1.15rem, 2.5vw, 1.5rem); }
+p { margin: 0 0 var(--space-2); max-width: 70ch; }
+
+a { color: var(--blue); text-underline-offset: 0.2em; }
+a:hover { color: var(--blue-dark); }
+
+::selection { background: var(--red); color: #fff; }
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--paper-alt); }
+::-webkit-scrollbar-thumb { background: var(--ink-soft); border-radius: 999px; border: 3px solid var(--paper-alt); }
+
+:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+}
+.section-dark :focus-visible { outline-color: var(--paper); }
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap; border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  background: var(--navy-dark);
+  color: var(--navy-text);
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  z-index: 100;
+  white-space: nowrap;
+  transform: translateY(-150%);
+  transition: transform 0.2s ease;
+}
+.skip-link:focus { transform: translateY(0); }
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-3);
+}
+
+section { padding: var(--space-5) 0; }
+.section-alt { background: var(--paper-alt); }
+.section-dark {
+  background: var(--navy-dark);
+  color: var(--navy-text);
+}
+.section-dark h2, .section-dark h3 { color: var(--navy-text); }
+.section-dark a { color: var(--navy-text); text-decoration: underline; text-decoration-color: rgba(244,239,225,0.5); }
+.section-dark a:hover { text-decoration-color: var(--navy-text); }
+
+.section-title { text-align: center; margin-bottom: var(--space-1); }
+.section-subtitle { text-align: center; max-width: 42rem; margin: 0 auto var(--space-4); opacity: 0.82; }
+
+/* ---------------------------------- Perforation (postage-stamp edge) ---------------------------------- */
+/* A repeating scalloped mask along one edge — the punched edge of a stamp
+   or the perforated tear-line of an aerogramme. Used sparingly, only on
+   surfaces that are meant to read as postal objects. */
+.perf-bottom {
+  -webkit-mask-image: radial-gradient(circle 5px at 5px 100%, transparent 4.6px, #000 5px);
+  mask-image: radial-gradient(circle 5px at 5px 100%, transparent 4.6px, #000 5px);
+  -webkit-mask-size: 10px 10px;
+  mask-size: 10px 10px;
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  -webkit-mask-position: bottom;
+  mask-position: bottom;
+}
+.perf-all {
+  -webkit-mask-image:
+    radial-gradient(circle 5px at 5px 5px, transparent 4.6px, #000 5px),
+    radial-gradient(circle 5px at 5px 5px, transparent 4.6px, #000 5px),
+    radial-gradient(circle 5px at 5px 5px, transparent 4.6px, #000 5px),
+    radial-gradient(circle 5px at 5px 5px, transparent 4.6px, #000 5px);
+  mask-image:
+    radial-gradient(circle 5px at 5px 5px, transparent 4.6px, #000 5px),
+    radial-gradient(circle 5px at 5px 5px, transparent 4.6px, #000 5px),
+    radial-gradient(circle 5px at 5px 5px, transparent 4.6px, #000 5px),
+    radial-gradient(circle 5px at 5px 5px, transparent 4.6px, #000 5px);
+  -webkit-mask-size: 10px 10px, 10px 10px, 10px 100%, 100% 10px;
+  mask-size: 10px 10px, 10px 10px, 10px 100%, 100% 10px;
+  -webkit-mask-position: top left, bottom left, left, top;
+  mask-position: top left, bottom left, left, top;
+  -webkit-mask-repeat: repeat-x, repeat-x, repeat-y, repeat-x;
+  mask-repeat: repeat-x, repeat-x, repeat-y, repeat-x;
+}
+
+/* ---------------------------------- Header ---------------------------------- */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--paper);
+  border-bottom: 3px dashed var(--line);
+}
+.site-header .container {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--space-2);
+  padding-top: var(--space-1); padding-bottom: var(--space-1);
+}
+.brand { display: flex; align-items: center; gap: var(--space-2); text-decoration: none; color: var(--ink); }
+.brand-sub { font-size: 0.8rem; opacity: 0.75; font-family: var(--font-type); letter-spacing: 0.02em; }
+
+@media (max-width: 640px) {
+  /* the brand block, language toggle, and menu button don't fit one row
+     at phone widths with the logo at full size and the subtitle shown;
+     shrink the mark and drop the subtitle rather than let the row overflow. */
+  .site-header .container { gap: 0.5rem; }
+  .brand { gap: 0.5rem; min-width: 0; }
+  .brand img { width: 84px; height: auto; }
+  .brand-sub { display: none; }
+  .header-actions { gap: 0.4rem; }
+  .lang-toggle, .nav-toggle { padding: 0.4rem 0.65rem; font-size: 0.85rem; }
+}
+
+.nav-toggle {
+  display: none;
+  background: none; border: 2px solid var(--ink); border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem; font: inherit; cursor: pointer;
+}
+
+.nav-menu {
+  display: flex; align-items: center; flex-wrap: wrap; row-gap: 0.5rem;
+  gap: var(--space-2); list-style: none; margin: 0; padding: 0;
+}
+.nav-menu a { color: var(--ink); text-decoration: none; font-weight: 600; white-space: nowrap; }
+.nav-menu a:hover { color: var(--red); }
+.nav-menu .btn { white-space: nowrap; }
+
+.lang-toggle, .btn-ghost {
+  background: none;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 1rem;
+  font: inherit; font-weight: 700;
+  cursor: pointer;
+  min-height: 44px;
+  color: var(--ink);
+}
+.lang-toggle:hover { background: var(--ink); color: var(--paper); }
+
+@media (max-width: 720px) {
+  .nav-toggle { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
+  .nav-menu {
+    position: absolute; left: 0; right: 0; top: 100%;
+    flex-direction: column; align-items: stretch;
+    background: var(--paper);
+    border-bottom: 3px dashed var(--line);
+    padding: var(--space-2) var(--space-3);
+    display: none;
+  }
+  .nav-menu.is-open { display: flex; }
+  .header-actions { display: flex; align-items: center; gap: var(--space-1); }
+}
+
+/* ---------------------------------- Ink-stamp buttons ---------------------------------- */
+/* Every button is rendered as a rubber ink stamp: a slightly rotated
+   rounded plate whose edge is roughened by the shared #stampRough SVG
+   filter (feTurbulence + displacementMap, defined once in index.html). */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 48px;
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--radius-md);
+  font: inherit; font-weight: 700; font-size: 1rem;
+  text-decoration: none;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transform: rotate(-0.6deg);
+  filter: url(#stampRough);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.btn:hover:not(:disabled) { transform: rotate(-0.6deg) scale(1.02); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; filter: url(#stampRough) grayscale(0.4); }
+.btn-primary { background: var(--red); color: #fff; box-shadow: 0 2px 0 var(--red-dark); }
+.btn-primary:hover:not(:disabled) { background: var(--red-dark); }
+.btn-secondary { background: transparent; color: var(--blue); border-color: var(--blue); }
+.btn-secondary:hover:not(:disabled) { background: var(--blue); color: #fff; }
+
+/* ---------------------------------- Hero: the sealed aerogramme ---------------------------------- */
+.hero { padding: var(--space-4) 0 var(--space-5); }
+.hero .container { max-width: 56rem; }
+
+.envelope {
+  position: relative;
+  padding: 10px;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--red) 0, var(--red) 14px,
+    var(--paper) 14px, var(--paper) 22px,
+    var(--blue) 22px, var(--blue) 36px,
+    var(--paper) 36px, var(--paper) 44px
+  );
+  border-radius: var(--radius-md);
+  box-shadow: 0 18px 40px rgba(25, 20, 10, 0.18);
+}
+.envelope-sheet {
+  position: relative;
+  background: var(--paper-white);
+  border-radius: 2px;
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  overflow: hidden;
+}
+.envelope-sheet::before {
+  /* faint fold crease, halfway down the sheet */
+  content: "";
+  position: absolute;
+  left: 6%; right: 6%; top: 50%;
+  border-top: 1px dashed rgba(43,38,32,0.14);
+}
+
+.postal-stamp {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-3);
+  width: 68px; height: 84px;
+  border: 2px dotted var(--red);
+  border-radius: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-type);
+  font-size: 0.55rem;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--red-dark);
+  transform: rotate(4deg);
+  background: rgba(177,39,45,0.04);
+}
+
+.airmail-stamp {
+  /* the hero.eyebrow content, rendered as a diagonal postal endorsement
+     mark across the top-left corner instead of a kicker/eyebrow pill.
+     TC content is ~11 characters; the EN translation runs to a full
+     sentence, so this wraps to two lines and sizes down rather than
+     truncating either language. */
+  position: absolute;
+  top: 26px; left: -22px;
+  width: 150px;
+  padding: 0.35rem 0.4rem;
+  background: var(--red);
+  color: #fff;
+  font-family: var(--font-type);
+  font-size: 0.58rem;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  text-align: center;
+  white-space: normal;
+  transform: rotate(-38deg);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+.hero h1 {
+  margin-top: var(--space-2);
+  max-width: 22ch;
+}
+.hero-subtitle { color: var(--ink-soft); max-width: 58ch; }
+.hero-actions { display: flex; gap: var(--space-2); justify-content: flex-start; flex-wrap: wrap; margin: var(--space-3) 0; }
+.hero-note {
+  font-size: 0.85rem;
+  font-family: var(--font-type);
+  color: var(--ink-soft);
+  border-top: 1px dashed var(--line);
+  padding-top: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+@media (max-width: 640px) {
+  /* the diagonal endorsement stamp's rotated footprint is fixed-size;
+     on a narrow sheet it needs both less width and more clearance above
+     the headline, or it prints straight through the first line of type. */
+  .airmail-stamp { width: 122px; font-size: 0.5rem; top: 20px; left: -16px; padding: 0.3rem 0.35rem; }
+  .envelope-sheet { padding-top: 5rem; }
+  .postal-stamp { width: 52px; height: 66px; font-size: 0.46rem; top: var(--space-1); right: var(--space-2); }
+}
+
+/* the envelope "opens": a peeled corner reveals the sheet underneath.
+   One authored moment, run once on load; skipped entirely under
+   prefers-reduced-motion via the global rule above. */
+.envelope-sheet {
+  animation: unseal 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.15s;
+}
+@keyframes unseal {
+  from { clip-path: inset(0 0 100% 0); opacity: 0; }
+  to { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+
+/* ---------------------------------- About: pinned correspondence, not identical cards ---------------------------------- */
+.letter-body { max-width: 62ch; }
+.letter-body p { color: var(--ink-soft); }
+
+.margin-notes {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  align-items: start;
+}
+.note-card {
+  position: relative;
+  background: var(--paper-white);
+  border: 1px solid var(--line);
+  padding: var(--space-3) var(--space-2) var(--space-2);
+  box-shadow: 0 6px 16px rgba(25,20,10,0.08);
+}
+.note-card:nth-child(1) { transform: rotate(-1.6deg); }
+.note-card:nth-child(2) { transform: rotate(1.1deg) translateY(1.25rem); }
+.note-card:nth-child(3) { transform: rotate(-0.8deg) translateY(0.5rem); }
+.note-card::before {
+  /* washi-tape corner */
+  content: "";
+  position: absolute;
+  top: -10px; left: 50%;
+  width: 64px; height: 22px;
+  margin-left: -32px;
+  background: var(--blue);
+  opacity: 0.75;
+  transform: rotate(-3deg);
+}
+.note-card:nth-child(odd)::before { background: var(--red); transform: rotate(3deg); }
+.note-card h3 { color: var(--red-dark); font-size: 1.05rem; margin-bottom: 0.4rem; }
+.note-card p { font-size: 0.95rem; color: var(--ink-soft); margin: 0; }
+
+@media (max-width: 780px) {
+  .margin-notes { grid-template-columns: 1fr; }
+  .note-card { transform: none !important; }
+}
+
+/* ---------------------------------- Templates: three different pieces of mail ---------------------------------- */
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-3);
+}
+.template-card {
+  position: relative;
+  display: block;
+  background: var(--paper-white);
+  border: 1px solid var(--line);
+  padding: var(--space-3);
+  cursor: pointer;
+  clip-path: polygon(0 0, 97% 0%, 100% 3%, 100% 100%, 3% 100%, 0% 97%);
+}
+.template-card input[type="radio"] { position: absolute; top: 1rem; right: 1rem; width: 20px; height: 20px; }
+.template-card:has(input:checked) { box-shadow: 0 0 0 3px var(--red) inset; }
+.template-card .muted { color: var(--ink-soft); font-size: 0.9rem; }
+
+.template-card--legacy, .template-card:has(input[value="legacy"]) { border-top: 6px solid var(--brass); }
+.template-card--acp, .template-card:has(input[value="acp"]) {
+  background: var(--paper-alt);
+  border-top: 6px solid var(--red);
+}
+.template-card--acp h3, .template-card--acp strong,
+.template-card:has(input[value="acp"]) strong { font-family: var(--font-type); letter-spacing: 0.02em; }
+.template-card--custom, .template-card:has(input[value="custom"]) {
+  border-top: 6px dashed var(--blue);
+}
+
+.badge {
+  display: inline-block;
+  background: var(--blue);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.7rem;
+  margin-top: var(--space-1);
+  filter: url(#stampRough);
+}
+.badge-warning { background: var(--red); color: #fff; }
+
+/* ---------------------------------- Journey: a postal route ---------------------------------- */
+.timeline {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-3);
+  counter-reset: step;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  top: 1.1rem; left: 0; right: 0;
+  border-top: 2px dashed rgba(244,239,225,0.3);
+  z-index: 0;
+}
+.timeline-item {
+  position: relative;
+  z-index: 1;
+  background: rgba(244, 239, 225, 0.05);
+  border: 1px solid rgba(244, 239, 225, 0.22);
+  padding: var(--space-3);
+}
+.timeline-item::before {
+  counter-increment: step;
+  content: counter(step);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.2rem; height: 2.2rem;
+  background: var(--paper);
+  color: var(--red-dark);
+  border: 2px solid var(--red);
+  border-radius: 50%;
+  font-family: var(--font-type);
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+/* ---------------------------------- Support tiers: postage denominations ---------------------------------- */
+.tier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-3);
+}
+.tier-card {
+  position: relative;
+  background: var(--paper-white);
+  padding: var(--space-4) var(--space-3) var(--space-3);
+  border: 1px solid var(--line);
+}
+.tier-card::after {
+  /* brass grommet */
+  content: "";
+  position: absolute;
+  top: var(--space-2); right: var(--space-2);
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--brass);
+  box-shadow: 0 0 0 2px var(--paper-white), 0 0 0 3px var(--brass);
+}
+.tier-card h3 { color: var(--blue-dark); font-family: var(--font-display); }
+.tier-card .who { font-size: 0.9rem; font-weight: 700; color: var(--ink-soft); }
+.pricing-note { text-align: center; margin-top: var(--space-3); color: var(--ink-soft); font-size: 0.95rem; font-family: var(--font-type); }
+
+/* ---------------------------------- Safety: official telegram notice ---------------------------------- */
+.safety-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.safety-card {
+  position: relative;
+  background: var(--paper-white);
+  border: 1px solid var(--line);
+  padding: var(--space-3);
+}
+.safety-card::before {
+  /* pinned-notice tack, not a side accent border */
+  content: "";
+  position: absolute;
+  top: -7px; left: var(--space-3);
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 2px 3px rgba(25,20,10,0.35);
+}
+.legal-box, .crisis-box {
+  background: var(--paper-white);
+  padding: var(--space-3);
+  margin-top: var(--space-3);
+  border-top: 3px double var(--ink);
+  border-bottom: 3px double var(--ink);
+}
+.legal-box h3, .crisis-box h3 {
+  font-family: var(--font-type);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.95rem;
+}
+.legal-box h3 { color: var(--red-dark); }
+.crisis-box h3 { color: var(--blue-dark); }
+.crisis-box ul { padding-left: 1.25rem; }
+
+/* ---------------------------------- Wizard: drafting the letter ---------------------------------- */
+.wizard-panel {
+  position: relative;
+  background: var(--paper-white);
+  padding: var(--space-4);
+  box-shadow: 0 12px 40px rgba(25, 20, 10, 0.15);
+  border: 1px solid var(--line);
+}
+.wizard-progress-track {
+  position: relative;
+  background: transparent;
+  border-bottom: 2px dashed var(--line);
+  height: 10px;
+  margin-bottom: var(--space-2);
+}
+.wizard-progress-bar {
+  position: absolute;
+  left: 0; top: 4px;
+  height: 2px;
+  width: 100%;
+  background: var(--red);
+  transform-origin: left;
+  transform: scaleX(0.14);
+  transition: transform 0.3s ease;
+}
+.wizard-progress-plane {
+  position: absolute;
+  left: 0; top: -0.5em;
+  font-size: 0.9rem;
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+  pointer-events: none;
+}
+.wizard-progress-text { font-size: 0.9rem; font-weight: 700; color: var(--ink-soft); font-family: var(--font-type); }
+
+.step-subtitle { color: var(--ink-soft); }
+.note-box {
+  background: var(--paper-alt);
+  border-top: 1px dashed var(--blue);
+  border-bottom: 1px dashed var(--blue);
+  padding: var(--space-2);
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+}
+
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-1);
+}
+.choice-card {
+  display: flex; align-items: center; gap: 0.6rem;
+  border: 1px solid var(--line);
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  min-height: 44px;
+  background: var(--paper-white);
+}
+.choice-card:has(input:checked) { border-color: var(--red); box-shadow: 0 0 0 2px var(--red) inset; background: #fdf1f1; }
+.choice-card input { width: 20px; height: 20px; flex-shrink: 0; }
+
+.card-group { border: none; padding: 0; margin: 0 0 var(--space-3); }
+.card-group legend { font-weight: 700; padding: 0; margin-bottom: 0.4rem; font-family: var(--font-display); }
+
+.field-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-2); }
+.field { display: flex; flex-direction: column; gap: 0.35rem; }
+.field label { font-weight: 700; }
+.field input {
+  font: inherit;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--line);
+  border-bottom: 2px solid var(--ink-soft);
+  border-radius: 0;
+  background: var(--paper-white);
+  min-height: 44px;
+}
+.field input:focus-visible { border-bottom-color: var(--blue); }
+
+.field-label { display: block; font-weight: 700; margin-bottom: 0.35rem; }
+.letter-textarea {
+  width: 100%;
+  font: inherit;
+  font-family: var(--font-type);
+  padding: var(--space-2);
+  border: 1px solid var(--line);
+  background: var(--paper-white);
+  resize: vertical;
+}
+.letter-actions { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-2); }
+.send-status { font-weight: 700; color: var(--blue-dark); }
+.small { font-size: 0.85rem; }
+.muted { color: var(--ink-soft); }
+
+.wizard-error { color: var(--red-dark); font-weight: 700; min-height: 1.3em; }
+
+.wizard-nav { display: flex; justify-content: space-between; margin-top: var(--space-3); gap: var(--space-2); }
+
+/* ---------------------------------- Footer ---------------------------------- */
+.site-footer {
+  background: var(--navy-dark);
+  color: var(--navy-text);
+  padding: var(--space-4) 0 var(--space-3);
+  border-top: 3px dashed rgba(244,239,225,0.25);
+}
+.site-footer .container { display: flex; flex-direction: column; gap: var(--space-2); }
+.footer-logo-placeholder { opacity: 0.95; }
+.footer-logo-placeholder img { filter: brightness(0) invert(1) opacity(0.9); }
+.footer-legal { font-size: 0.9rem; opacity: 0.85; max-width: 46rem; }
+.footer-meta { display: flex; flex-wrap: wrap; gap: var(--space-3); font-size: 0.85rem; opacity: 0.8; font-family: var(--font-type); }

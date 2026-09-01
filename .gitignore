@@ -1,0 +1,20 @@
+# Python
+backend/__pycache__/
+*.pyc
+
+# Runtime logs
+data/*.log
+
+# Impeccable working state (heavy binary mocks, review screenshots, local overrides)
+.impeccable/mocks/
+.impeccable/review/
+.impeccable/hook.cache.json
+.impeccable/config.local.json
+
+# OS
+.DS_Store
+
+# Claude Code / Impeccable skill tooling (not part of the shipped site)
+.claude/
+.impeccable/questions/
+

@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-31T00:00:00Z",
+  "title": "Design System: 生死晚餐 Death Over Dinner (HK) — Airborne Letters",
+  "extensions": {
+    "colorMeta": {
+      "airmail-red": { "role": "primary", "displayName": "Airmail Red", "canonical": "#b1272d" },
+      "airmail-red-deep": { "role": "primary-hover", "displayName": "Airmail Red Deep", "canonical": "#8a1e23" },
+      "airmail-blue": { "role": "secondary", "displayName": "Airmail Blue", "canonical": "#1a3e72" },
+      "airmail-blue-deep": { "role": "secondary-hover", "displayName": "Airmail Blue Deep", "canonical": "#122c52" },
+      "paper": { "role": "neutral-bg", "displayName": "Onion-Skin Paper", "canonical": "#f4efe1" },
+      "paper-alt": { "role": "neutral-bg-alt", "displayName": "Aged Paper", "canonical": "#ebe0c7" },
+      "paper-white": { "role": "neutral-surface", "displayName": "Sheet White", "canonical": "#fbf8f0" },
+      "ink": { "role": "neutral-text", "displayName": "Correspondence Ink", "canonical": "#2b2620" },
+      "ink-soft": { "role": "neutral-text-secondary", "displayName": "Faded Ink", "canonical": "#55493c" },
+      "night-post": { "role": "neutral-dark", "displayName": "Night Post", "canonical": "#191f34" },
+      "brass": { "role": "decorative", "displayName": "Brass", "canonical": "#a9812f" },
+      "torn-line": { "role": "neutral-border", "displayName": "Torn-Paper Line", "canonical": "#d9c8a3" },
+      "on-accent": { "role": "text-on-fill", "displayName": "On-Accent White", "canonical": "#ffffff" },
+      "selected-tint": { "role": "state-selected", "displayName": "Selected Tint", "canonical": "#fdf1f1" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Hero Headline", "purpose": "The hero h1 only, Noto Serif HK." },
+      "headline": { "displayName": "Section Headline", "purpose": "Section h2 titles, Noto Serif HK." },
+      "title": { "displayName": "Card Title", "purpose": "Card/step h3 headings, Noto Serif HK." },
+      "body": { "displayName": "Letter Body", "purpose": "Running prose, Noto Sans HK." },
+      "body-sm": { "displayName": "Compact Body", "purpose": "Prose inside choice cards and note boxes." },
+      "label": { "displayName": "Label", "purpose": "Instructional metadata — progress text, field labels, tier fit lines." },
+      "caption": { "displayName": "Caption", "purpose": "Small print — hero disclaimer, footer meta." },
+      "micro": { "displayName": "Micro", "purpose": "Badges — the smallest UI mark." },
+      "control": { "displayName": "Control", "purpose": "Every button label." },
+      "postmark": { "displayName": "Postal Chrome", "purpose": "Postmarks, numerals, small English UI labels only — Special Elite. Multi-step by nature (0.46–0.8rem across the brand subtitle, corner stamp, and endorsement stamp, each with its own mobile step); see DESIGN.md Typography for the full list. Never body copy." }
+    },
+    "shadows": [
+      { "name": "envelope-lift", "value": "0 18px 40px rgba(25,20,10,0.18)", "purpose": "The hero envelope frame resting on the page." },
+      { "name": "desk-lift", "value": "0 12px 40px rgba(25,20,10,0.15)", "purpose": "The wizard panel, read as a writing surface." },
+      { "name": "stamp-press", "value": "0 2px 0 var(--red-dark)", "purpose": "Primary button's stamped-down offset." }
+    ],
+    "motion": [
+      { "name": "unseal", "value": "clip-path inset 1.1s cubic-bezier(0.16,1,0.3,1)", "purpose": "One-time hero envelope reveal on load; skipped under prefers-reduced-motion." },
+      { "name": "progress-fill", "value": "transform: scaleX() 0.3s ease", "purpose": "Wizard progress bar fill — transform, not width, to avoid layout thrash." },
+      { "name": "progress-plane", "value": "transform: translateX() 0.3s ease", "purpose": "The travelling plane marker on the wizard progress track." }
+    ],
+    "breakpoints": [
+      { "name": "nav-collapse", "value": "720px" },
+      { "name": "hero-stamp-refit", "value": "640px" },
+      { "name": "card-grid-stack", "value": "780px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ink rubber-stamp CTA: rotated, roughened edge, hard offset shadow.",
+      "html": "<button class=\"ds-btn-primary\">開始籌備我嘅生死晚餐</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0.75rem 1.75rem; border-radius: 6px; font-weight: 700; font-size: 1rem; border: 2px solid transparent; cursor: pointer; transform: rotate(-0.6deg); background: #b1272d; color: #fff; box-shadow: 0 2px 0 #8a1e23; transition: transform 0.15s ease, background 0.15s ease; } .ds-btn-primary:hover { background: #8a1e23; transform: rotate(-0.6deg) scale(1.02); } .ds-btn-primary:focus-visible { outline: 3px solid #1a3e72; outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Blue outline ink stamp, same roughened-edge family as primary.",
+      "html": "<button class=\"ds-btn-secondary\">先了解吓點運作</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0.75rem 1.75rem; border-radius: 6px; font-weight: 700; font-size: 1rem; border: 2px solid #1a3e72; background: transparent; color: #1a3e72; cursor: pointer; transform: rotate(-0.6deg); transition: transform 0.15s ease, background 0.15s ease; } .ds-btn-secondary:hover { background: #1a3e72; color: #fff; }"
+    },
+    {
+      "name": "Note Card",
+      "kind": "card",
+      "refersTo": "note-card",
+      "description": "Taped, individually rotated correspondence card — the About section's non-uniform alternative to a 3-up icon grid.",
+      "html": "<div class=\"ds-note-card\"><h3>由你主辦</h3><p>邀請名單、話題深淺、場地形式，全部由你話事，我哋只提供意見。</p></div>",
+      "css": ".ds-note-card { position: relative; background: #fbf8f0; border: 1px solid #d9c8a3; padding: 1.5rem 1rem 1rem; box-shadow: 0 6px 16px rgba(25,20,10,0.08); transform: rotate(-1.6deg); } .ds-note-card::before { content: ''; position: absolute; top: -10px; left: 50%; width: 64px; height: 22px; margin-left: -32px; background: #b1272d; opacity: 0.75; transform: rotate(3deg); } .ds-note-card h3 { color: #8a1e23; font-family: 'Noto Serif HK', Georgia, serif; font-size: 1.05rem; margin: 0 0 0.4rem; } .ds-note-card p { font-size: 0.95rem; color: #55493c; margin: 0; }"
+    },
+    {
+      "name": "Safety Card",
+      "kind": "card",
+      "refersTo": "safety-card",
+      "description": "Pinned-notice card — a tack dot replaces the banned colored side border.",
+      "html": "<div class=\"ds-safety-card\"><h3>家庭衝突風險</h3><p>討論死亡同晚期照顧意願，喺華人家庭入面容易觸發抗拒。</p></div>",
+      "css": ".ds-safety-card { position: relative; background: #fbf8f0; border: 1px solid #d9c8a3; padding: 1.5rem; } .ds-safety-card::before { content: ''; position: absolute; top: -7px; left: 1.5rem; width: 12px; height: 12px; border-radius: 50%; background: #b1272d; box-shadow: 0 2px 3px rgba(25,20,10,0.35); }"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "nav-menu",
+      "description": "Sticky paper header with a dashed rule; collapses to a toggled sheet under 720px.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#about\">關於呢件事</a><a class=\"ds-nav-cta\" href=\"#wizard\">開始籌備</a></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: 1rem; } .ds-nav a { color: #2b2620; text-decoration: none; font-weight: 600; } .ds-nav a:hover { color: #b1272d; } .ds-nav-cta { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0.6rem 1.4rem; border-radius: 6px; background: #b1272d; color: #fff !important; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Airborne Letters",
+    "overview": "The site is not a page about a dinner; it is the letter the visitor has been meaning to send. Every surface borrows its materials from Hong Kong par-avion correspondence — onion-skin paper, the diagonal red-and-blue airmail chevron, ink rubber stamps, typewritten postmarks — because the product's actual mechanism is a host finally saying, in person, what a letter would otherwise carry unsent. The world was chosen over the roll's own assignment ('The Long Table,' a mahjong-table system) specifically because it dramatizes the product's central promise more directly, at the acknowledged cost of being the more expected reach for a correspondence metaphor. It replaces the incumbent cream/red/teal 'modern nonprofit landing page' entirely.",
+    "keyCharacteristics": [
+      "Every section is a distinct piece of mail — sealed aerogramme, pinned notice, postage-denomination card — never a generic rounded panel.",
+      "The hero visibly unseals on load, skipped under reduced motion.",
+      "Controls are ink rubber stamps: rotated, roughened at the edge via an SVG turbulence filter.",
+      "Kickers/eyebrows are refused outright; the hero's eyebrow copy survives as a diagonal postal endorsement stamp instead.",
+      "Bilingual by construction — every postal motif holds both Traditional Chinese and English without truncating either."
+    ],
+    "rules": [
+      { "name": "The Rationed Red Rule", "body": "Airmail red never decorates; it appears only on the primary action, the selected state, or the topic that needs the most weight (ACP). A page with red on more than a handful of elements has drifted.", "section": "colors" },
+      { "name": "The One-Voice-Per-Material Rule", "body": "Noto Serif HK speaks; Noto Sans HK explains; Special Elite stamps. No component borrows a second family for emphasis.", "section": "typography" },
+      { "name": "The Object-Not-Panel Rule", "body": "A card earns depth by being a specific postal object before it earns a shadow. Reach for material first.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do ration airmail red to the primary action, the selected state, and the ACP template.",
+      "Do give every card family its own fastening motif (tape, grommet, pin, deckle-clip) rather than reusing one card shell everywhere.",
+      "Do keep Special Elite confined to postal/numeric chrome.",
+      "Do animate via filter/clip-path/transform, never width/height/margin."
+    ],
+    "donts": [
+      "Don't use a kicker or eyebrow pill above any heading.",
+      "Don't put a colored border-left/border-right above 1px on any card.",
+      "Don't introduce a large soft-app border radius (12px+) anywhere.",
+      "Don't let the diagonal hero stamp's fixed rotated box run past the sheet edge — verify both languages at the narrowest supported width whenever its copy changes."
+    ]
+  }
+}

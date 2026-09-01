@@ -1,0 +1,7 @@
+name: death-over-dinner-hk
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - flask=3.*
+  - pip
