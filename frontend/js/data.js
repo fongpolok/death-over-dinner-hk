@@ -1,5 +1,16 @@
 /* The "question bank": every selectable option in the wizard, plus the
-   conversation-card bank from the dinner-structure reference document.
+   conversation-card bank drawn from "Life and death prog_Question Bank.docx".
+
+   Deliberately NOT deathoverdinner.org's structure (pick a menu, then get
+   that menu's card pack). Instead the source document's ~36 questions are
+   grouped by the life-and-death issue they actually raise, and each theme
+   carries two kinds of content:
+     - `reflectionI18n`: one of the document's heavier, longer questions,
+       shown read-only as something for the HOST to sit with while they
+       fill in the form — never sent anywhere, never printed as a card.
+     - `cards`: shorter, table-ready prompts (adapted from the document
+       where needed) the host can choose to hand to guests on the night.
+
    Kept separate from wizard logic so the bank can be edited/extended
    without touching how the wizard behaves. */
 window.DOD = window.DOD || {};
@@ -17,36 +28,12 @@ window.DOD.DATA = {
   ],
 
   intents: [
-    { id: "acp", i18n: "intent.acp", recommends: "acp" },
-    { id: "loss", i18n: "intent.loss", recommends: "acp" },
-    { id: "repair", i18n: "intent.repair", recommends: "legacy" },
-    { id: "legacy", i18n: "intent.legacy", recommends: "legacy" },
-    { id: "selfPlan", i18n: "intent.selfPlan", recommends: "acp" },
-    { id: "explore", i18n: "intent.explore", recommends: "legacy" }
-  ],
-
-  templates: [
-    {
-      id: "legacy",
-      name: "templates.legacy.name",
-      purpose: "templates.legacy.purpose",
-      fit: "templates.legacy.fit",
-      intensity: "templates.legacy.intensity"
-    },
-    {
-      id: "acp",
-      name: "templates.acp.name",
-      purpose: "templates.acp.purpose",
-      fit: "templates.acp.fit",
-      intensity: "templates.acp.intensity"
-    },
-    {
-      id: "custom",
-      name: "templates.custom.name",
-      purpose: "templates.custom.purpose",
-      fit: "templates.custom.fit",
-      intensity: "templates.custom.intensity"
-    }
+    { id: "acp", i18n: "intent.acp" },
+    { id: "loss", i18n: "intent.loss" },
+    { id: "repair", i18n: "intent.repair" },
+    { id: "legacy", i18n: "intent.legacy" },
+    { id: "selfPlan", i18n: "intent.selfPlan" },
+    { id: "explore", i18n: "intent.explore" }
   ],
 
   tones: [
@@ -55,39 +42,75 @@ window.DOD.DATA = {
     { id: "light", i18n: "tone.light" }
   ],
 
-  /* Conversation-card bank, grouped to match the source document's
-     three card categories. ACP cards are flagged: their wording is
-     explicitly marked in the reference document as pending review by
-     a clinical/social-work professional before real-world use. */
+  /* Five life-and-death themes, reorganised from the source question bank
+     by subject rather than by "dinner package". needsReview marks the one
+     theme (medical/dignity) whose wording is explicitly flagged in the
+     source document as pending clinical/social-work review. */
   cardGroups: [
     {
-      id: "warmup",
-      titleI18n: "step5.groupWarmup",
+      id: "fate",
+      titleI18n: "theme.fate.title",
+      reflectionI18n: "theme.fate.reflection",
       needsReview: false,
       cards: [
-        { id: "w1", i18n: "card.w1" },
-        { id: "w2", i18n: "card.w2" }
+        { id: "f1", i18n: "card.f1" },
+        { id: "f2", i18n: "card.f2" },
+        { id: "f3", i18n: "card.f3" },
+        { id: "f4", i18n: "card.f4" },
+        { id: "f5", i18n: "card.f5" }
+      ]
+    },
+    {
+      id: "love",
+      titleI18n: "theme.love.title",
+      reflectionI18n: "theme.love.reflection",
+      needsReview: false,
+      cards: [
+        { id: "lv1", i18n: "card.lv1" },
+        { id: "lv2", i18n: "card.lv2" },
+        { id: "lv3", i18n: "card.lv3" },
+        { id: "lv4", i18n: "card.lv4" },
+        { id: "lv5", i18n: "card.lv5" }
       ]
     },
     {
       id: "legacy",
-      titleI18n: "step5.groupLegacy",
+      titleI18n: "theme.legacy.title",
+      reflectionI18n: "theme.legacy.reflection",
       needsReview: false,
       cards: [
-        { id: "l1", i18n: "card.l1" },
-        { id: "l2", i18n: "card.l2" },
-        { id: "l3", i18n: "card.l3" },
-        { id: "l4", i18n: "card.l4" }
+        { id: "lg1", i18n: "card.lg1" },
+        { id: "lg2", i18n: "card.lg2" },
+        { id: "lg3", i18n: "card.lg3" },
+        { id: "lg4", i18n: "card.lg4" },
+        { id: "lg5", i18n: "card.lg5" },
+        { id: "lg6", i18n: "card.lg6" }
       ]
     },
     {
-      id: "acp",
-      titleI18n: "step5.groupAcp",
+      id: "fear",
+      titleI18n: "theme.fear.title",
+      reflectionI18n: "theme.fear.reflection",
+      needsReview: false,
+      cards: [
+        { id: "fr1", i18n: "card.fr1" },
+        { id: "fr2", i18n: "card.fr2" },
+        { id: "fr3", i18n: "card.fr3" },
+        { id: "fr4", i18n: "card.fr4" },
+        { id: "fr5", i18n: "card.fr5" }
+      ]
+    },
+    {
+      id: "medical",
+      titleI18n: "theme.medical.title",
+      reflectionI18n: "theme.medical.reflection",
       needsReview: true,
       cards: [
-        { id: "a1", i18n: "card.a1" },
-        { id: "a2", i18n: "card.a2" },
-        { id: "a3", i18n: "card.a3" }
+        { id: "md1", i18n: "card.md1" },
+        { id: "md2", i18n: "card.md2" },
+        { id: "md3", i18n: "card.md3" },
+        { id: "md4", i18n: "card.md4" },
+        { id: "md5", i18n: "card.md5" }
       ]
     }
   ]

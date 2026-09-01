@@ -196,6 +196,11 @@ Corners are small and utilitarian (2px / 3px / 6px) — this is a paper-and-ink 
 ### Signature component: the wizard progress line
 The step progress is a dashed "postal route" with a solid red fill (`transform: scaleX()`, not `width`, to stay off the layout-thrash path) and a ✈ marker that travels along it via measured `translateX()`, positioned by JS reading the track's rendered width — not a generic progress bar.
 
+### Reflection prompt
+- **Character:** something to read, not an instruction to act on — the wizard's mechanism for making the host think about life and death while filling in the form, not just configuring a dinner.
+- **Style:** dashed top and bottom rule (the `.note-box` ticket-stub motif, reused), a small Special Elite kicker ("諗吓：" / "Sit with this:"), body set in italic Noto Serif HK, ink-soft color — deliberately quieter than `.note-box`'s upright sans instructions.
+- **Content rule:** carries the source question bank's longer, heavier questions; the bank's shorter questions become selectable cards instead. A question never appears in both places.
+
 ## Do's and Don'ts
 
 ### Do:
