@@ -1,0 +1,432 @@
+/* Bilingual text dictionary (Traditional Chinese / English).
+   Every user-facing string lives here so the TC/EN toggle has one source of truth. */
+window.DOD = window.DOD || {};
+
+window.DOD.I18N = {
+  tc: {
+    "meta.htmlLang": "zh-Hant-HK",
+    "nav.brandSub": "生死晚餐 · Memento Amoris",
+    "nav.about": "關於呢件事",
+    "nav.templates": "晚餐模板",
+    "nav.journey": "籌備流程",
+    "nav.support": "支援方案",
+    "nav.safety": "安全與界線",
+    "nav.cta": "開始籌備",
+    "nav.langToggle": "EN",
+    "nav.menuToggle": "選單",
+    "skip.toMain": "跳到主要內容",
+
+    "hero.eyebrow": "由你主辦，我哋喺後面撐住你",
+    "hero.title": "呢一餐飯，講返啲一直冇講嘅說話",
+    "hero.subtitle": "生死晚餐唔係派對，亦唔係輔導——係一個由你發起、我哋幫手籌備嘅聚會，等你同最重要嘅人，好好傾一次生命同死亡呢個話題。",
+    "hero.ctaPrimary": "開始籌備我嘅生死晚餐",
+    "hero.ctaSecondary": "先了解吓點運作",
+    "hero.note": "全程廣東話 / 中英雙語支援，適合香港家庭同朋友圈使用。",
+
+    "about.title": "呢個唔係一個「產品」，係你嘅一個心意",
+    "about.p1": "同機構主導嘅沉浸式體驗唔同，生死晚餐嘅主角由頭到尾都係<strong>你</strong>。你想同阿爸講嘅嗰句話、想同伴侶交代嘅心願、想同朋友重新連結嘅一餐飯——我哋嘅角色，係喺幕後幫你將呢個心願，變成一個具體、安全、可執行嘅聚會。",
+    "about.p2": "我哋唔係內容嘅擁有者，你先係。我哋提供結構、對話工具同陪伴，但邀請邊個、傾咩話題、去到幾深，永遠由你決定。",
+    "about.card1.title": "由你主辦",
+    "about.card1.body": "邀請名單、話題深淺、場地形式，全部由你話事，我哋只提供意見。",
+    "about.card2.title": "我哋陪住你",
+    "about.card2.body": "由籌備到晚餐當日，有專屬統籌員全程對接，唔使一個人摸索。",
+    "about.card3.title": "有安全網",
+    "about.card3.body": "對話卡、主辦人手冊、駐場支援，幫你有信心咁面對呢個唔容易嘅話題。",
+
+    "templates.title": "揀一個啱你嘅晚餐模板",
+    "templates.subtitle": "三個基礎模板俾你參考，你亦可以自訂混合玩法。",
+    "templates.legacy.name": "傳承版 Legacy Dinner",
+    "templates.legacy.purpose": "分享人生故事、感恩、價值觀傳承",
+    "templates.legacy.fit": "家庭聚會、多代同堂、慶祝性質場合",
+    "templates.legacy.intensity": "情感強度：較低至中",
+    "templates.acp.name": "晚晴版 ACP Dinner",
+    "templates.acp.purpose": "明確討論醫療及晚期照顧意願（AD／ACP相關）",
+    "templates.acp.fit": "想同父母、伴侶、子女傾晚期照顧安排",
+    "templates.acp.intensity": "情感強度：中至高",
+    "templates.custom.name": "自訂版 Custom Dinner",
+    "templates.custom.purpose": "自定主題，例如和解、告別、里程碑紀念",
+    "templates.custom.fit": "個人化需求，例如與久未見面嘅家人重聚",
+    "templates.custom.intensity": "情感強度：視乎主題",
+    "templates.recommended": "建議首次主辦人由呢個開始",
+
+    "journey.title": "由報名到晚餐後，我哋點樣陪你",
+    "journey.subtitle": "一個大約 3-4 星期嘅籌備旅程（視乎你嘅節奏調整）",
+    "journey.s1.title": "報名及意向確認",
+    "journey.s1.body": "了解你想邀請邊啲人、大約人數同初步動機。",
+    "journey.s2.title": "動機及目的會談",
+    "journey.s2.body": "生死教育顧問陪你搵出「想同邊個講咩」嘅具體答案。",
+    "journey.s3.title": "主題及對話設計",
+    "journey.s3.body": "一齊揀模板、決定深度節奏、對話卡內容。",
+    "journey.s4.title": "賓客邀請設計",
+    "journey.s4.body": "邀請函唔會「伏擊」賓客，語調由你揀。",
+    "journey.s5.title": "場地餐飲統籌",
+    "journey.s5.body": "按預算提供2-3個方案，落實流程時間表。",
+    "journey.s6.title": "晚餐當日",
+    "journey.s6.body": "由暖場到紀念環節，我哋幫你打好節奏。",
+    "journey.s7.title": "晚餐後跟進",
+    "journey.s7.body": "了解成效，有需要時提供專業轉介資訊。",
+
+    "support.title": "揀返啱你預算同需要嘅支援層級",
+    "support.full.name": "全程支援",
+    "support.full.body": "意向會談＋對話設計＋場地餐飲統籌＋駐場主持全程在場。",
+    "support.full.who": "適合：首次主辦、「晚晴版」等高情感強度晚餐",
+    "support.half.name": "半程支援",
+    "support.half.body": "意向會談＋對話設計＋工具包，駐場主持僅開場及結尾在場。",
+    "support.half.who": "適合：已有一定經驗、家庭溝通基礎較好嘅主辦人",
+    "support.diy.name": "自助包",
+    "support.diy.body": "提供對話卡、主辦人手冊、場地餐飲夥伴名單，機構不駐場。",
+    "support.diy.who": "適合：重複主辦人、預算有限、或本身已具備引導經驗",
+    "support.pricingNote": "具體收費：待定，會於意向會談時同你確認。",
+
+    "safety.title": "安全同界線，我哋話得出做得到",
+    "safety.risk1.title": "家庭衝突風險",
+    "safety.risk1.body": "討論死亡同晚期照顧意願，喺華人家庭入面容易觸發抗拒。建議先由較溫和嘅「傳承版」開始。",
+    "safety.risk2.title": "唔可以伏擊賓客",
+    "safety.risk2.body": "邀請函一定清楚講明晚餐性質同主題，等賓客有心理準備、可以自行決定是否出席。",
+    "safety.risk3.title": "駐場主持嘅界線",
+    "safety.risk3.body": "駐場主持只協助流程推進，唔會介入家庭決定本身。如有嚴重衝突會暫停活動，個別安撫。",
+    "safety.legal.title": "重要：法律及倫理界線",
+    "safety.legal.body": "我哋嘅角色僅限於促進對話同提供一般資訊，<strong>並非法律或醫療意見提供者，亦不代辦任何法律文件嘅簽署</strong>。如你哋有意進行正式嘅預設醫療指示（AD）／預設照顧計劃（ACP），我哋會提供轉介資訊（例如家庭醫生、醫管局 ACP 服務、律師），但正式簽署程序須另行安排。",
+    "safety.crisis.title": "如果而家有緊急需要",
+    "safety.crisis.body": "如果你或者身邊嘅人而家正處於急性哀傷、家庭危機或情緒困擾，生死晚餐可以遲啲先安排。你並不孤單，可以先聯絡：",
+    "safety.crisis.line1": "醫管局 24 小時精神健康支援熱線：18111",
+    "safety.crisis.line2": "撒瑪利亞防止自殺會 24 小時熱線：2389 2222",
+    "safety.crisis.line3": "明愛向晴熱線：18288",
+
+    "wizard.title": "開始籌備你嘅生死晚餐",
+    "wizard.subtitle": "回答幾條問題，我哋幫你組合一份可以即刻送出嘅邀請函。",
+    "wizard.progress": "第 {current} 步，共 {total} 步",
+    "wizard.back": "上一步",
+    "wizard.next": "下一步",
+    "wizard.finish": "生成邀請函",
+
+    "step1.title": "邊啲人會喺你嘅晚餐度？",
+    "step1.subtitle": "可以揀多過一個。",
+    "step1.error": "請至少揀一位邀請對象。",
+    "opt.parents": "父母",
+    "opt.partner": "伴侶",
+    "opt.children": "子女",
+    "opt.siblings": "兄弟姊妹",
+    "opt.elders": "祖父母／長輩",
+    "opt.friends": "朋友",
+    "opt.colleagues": "同事",
+    "opt.notsure": "未定",
+
+    "step2.title": "你想透過呢頓飯，傳達啲咩？",
+    "step2.subtitle": "揀最貼近你現時心情嘅一個。",
+    "step2.error": "請揀一個原因，等我哋更了解你。",
+    "intent.acp": "想同父母／長輩傾晚期照顧同身後意願",
+    "intent.loss": "屋企人啱啱經歷重病或離世",
+    "intent.repair": "想同伴侶／子女修補或加深關係",
+    "intent.legacy": "純粹想同家人朋友傳承故事、講心底話",
+    "intent.selfPlan": "想為自己整理身後意願，順便同身邊人分享",
+    "intent.explore": "未有明確目的，想試下呢種對話方式",
+    "step2.crisisNote": "如果呢個情況涉及緊急危機，我哋嘅團隊會先同你傾一次，確保你有足夠支援。",
+
+    "step3.title": "揀一個晚餐模板",
+    "step3.subtitle": "根據你上一步嘅答案，我哋建議咗一個俾你，你亦可以自由更改。",
+    "step3.error": "請揀一個晚餐模板。",
+    "step3.recommendedBadge": "為你推薦",
+
+    "step4.title": "邀請函嘅語調",
+    "step4.subtitle": "你想邀請函聽落點樣？",
+    "step4.error": "請揀一種語調。",
+    "tone.warm": "溫馨",
+    "tone.solemn": "莊重",
+    "tone.light": "輕鬆",
+
+    "step5.title": "揀幾張對話卡",
+    "step5.subtitle": "建議揀 3 至 5 張，作為晚餐當晚嘅話題引子。",
+    "step5.error": "請揀 3 至 5 張對話卡。",
+    "step5.groupWarmup": "開場暖身卡",
+    "step5.groupLegacy": "傳承版卡牌",
+    "step5.groupAcp": "晚晴版卡牌",
+    "step5.acpBadge": "字眼待醫護／社工審閱",
+
+    "card.w1": "你細個屋企人整過最深刻嘅一餐飯係咩？",
+    "card.w2": "如果要形容你今年嘅心情做一道菜，會係咩？",
+    "card.l1": "你最想俾屋企人記得你嘅邊一面？",
+    "card.l2": "有邊件事你一直想多謝／道歉但未講出口？",
+    "card.l3": "你人生入面最驕傲嘅一個決定係咩？",
+    "card.l4": "如果只留低一件物件俾下一代，你會揀咩？",
+    "card.a1": "如果有一日你唔清醒，你希望邊個幫你做決定？",
+    "card.a2": "你對「尊嚴」喺生命最後階段嘅理解係咩？",
+    "card.a3": "你希望喺邊度、同邊個一齊，渡過人生最後嘅時光？",
+
+    "step6.title": "晚餐嘅基本資料",
+    "step6.subtitle": "呢啲資料會用嚟自動組合你嘅邀請函。",
+    "field.hostName": "你嘅稱呼",
+    "field.hostName.ph": "例如：阿明",
+    "field.hostName.error": "請填寫你嘅稱呼。",
+    "field.dinnerTitle": "晚餐名稱（可自訂，選填）",
+    "field.dinnerTitle.ph": "例如：屋企人團聚飯局",
+    "field.date": "日期",
+    "field.date.error": "請選擇日期。",
+    "field.time": "時間",
+    "field.time.error": "請選擇時間。",
+    "field.location": "地點（選填）",
+    "field.location.ph": "例如：屋企 / 餐廳名稱",
+    "field.guests": "賓客稱呼（選填，用逗號分隔）",
+    "field.guests.ph": "例如：媽媽, 細佬, 阿姨",
+
+    "step7.title": "覆核你嘅邀請函",
+    "step7.subtitle": "邀請函已經幫你寫好初稿，你可以自由修改文字，先送出。",
+    "step7.letterLabel": "邀請函內容（可編輯）",
+    "step7.principleNote": "小提示：邀請函要清楚講明晚餐嘅性質同主題，唔好「伏擊」賓客，等佢哋有心理準備。",
+    "step7.sendWhatsapp": "用 WhatsApp 傳送邀請",
+    "step7.copyText": "複製文字",
+    "step7.copied": "已複製！",
+    "step7.logNote": "（本機記錄：我哋會將呢份邀請函摘要暫存喺你電腦嘅本機記錄程式，方便你團隊日後跟進，唔會自動上載或寄出俾任何人。）",
+
+    "letter.greetingGeneric": "各位",
+    "letter.intro.warm": "呢排我一直有樣嘢想同大家講，所以想邀請大家食餐飯，好好傾下我哋嘅人生同一啲想講但未講嘅說話。",
+    "letter.intro.solemn": "我誠意邀請大家出席一次特別嘅聚會，一齊靜下心嚟，傾一傾生命同死亡呢個對我哋每個人都重要嘅話題。",
+    "letter.intro.light": "唔使驚，唔係咩嚴肅場合！純粹想大家一齊食餐好嘢，輕輕鬆鬆傾下心底話啫。",
+    "letter.templateNote": "呢次晚餐嘅主題係：{template}。",
+    "letter.detailsIntro": "詳情如下：",
+    "letter.detailDate": "日期：{date}",
+    "letter.detailTime": "時間：{time}",
+    "letter.detailLocation": "地點：{location}",
+    "letter.closing": "如果你想嚟，記得話我知呀，非常期待同你見面！",
+    "letter.signOff": "—— {host}",
+
+    "footer.brandSub": "生死晚餐 · Memento Amoris",
+    "footer.legal": "本機構之角色僅限於促進對話同提供一般資訊，並非法律或醫療意見提供者，亦不會代辦任何法律文件嘅簽署或見證。",
+    "footer.contactPending": "聯絡方法：待補充",
+    "footer.copyright": "© {year} 三渡棧 Mementos（暫定名稱，品牌形象製作中）",
+  },
+
+  en: {
+    "meta.htmlLang": "en",
+    "nav.brandSub": "Death Over Dinner · Memento Amoris",
+    "nav.about": "What This Is",
+    "nav.templates": "Dinner Templates",
+    "nav.journey": "The Journey",
+    "nav.support": "Support Plans",
+    "nav.safety": "Safety & Boundaries",
+    "nav.cta": "Start Planning",
+    "nav.langToggle": "中文",
+    "nav.menuToggle": "Menu",
+    "skip.toMain": "Skip to main content",
+
+    "hero.eyebrow": "You host it. We stand behind you.",
+    "hero.title": "The dinner where you finally say it",
+    "hero.subtitle": "This isn't a party, and it isn't therapy — it's a gathering you start, that we help you build, so you and the people who matter most can talk about life and death, properly, for once.",
+    "hero.ctaPrimary": "Start Planning My Dinner",
+    "hero.ctaSecondary": "See how it works first",
+    "hero.note": "Bilingual Cantonese / English support, built for Hong Kong families and friend circles.",
+
+    "about.title": "This isn't a product. It's your gesture of love.",
+    "about.p1": "Unlike an institution-led immersive experience, you are the protagonist of Death Over Dinner from start to finish. The words you want to say to your father, the wishes you want your partner to know, the meal that reconnects you with old friends — our role is to help turn that wish into something real, safe and doable.",
+    "about.p2": "We don't own the content — you do. We provide structure, conversation tools and companionship, but who's invited, what's discussed, and how deep it goes is always your call.",
+    "about.card1.title": "You Host",
+    "about.card1.body": "Guest list, depth of topics, format — all yours to decide. We only advise.",
+    "about.card2.title": "We Walk With You",
+    "about.card2.body": "A dedicated coordinator stays with you from sign-up to the day after — you're never figuring it out alone.",
+    "about.card3.title": "There's a Safety Net",
+    "about.card3.body": "Conversation cards, a host's handbook and on-site support help you face this difficult topic with confidence.",
+
+    "templates.title": "Choose a Dinner Template",
+    "templates.subtitle": "Three starting templates, or mix your own.",
+    "templates.legacy.name": "Legacy Dinner",
+    "templates.legacy.purpose": "Share life stories, gratitude, and values passed down",
+    "templates.legacy.fit": "Family gatherings, multi-generational, celebratory occasions",
+    "templates.legacy.intensity": "Emotional intensity: low to medium",
+    "templates.acp.name": "ACP Dinner",
+    "templates.acp.purpose": "A focused conversation on medical and end-of-life care wishes (AD/ACP)",
+    "templates.acp.fit": "For talking with parents, partners or children about end-of-life care",
+    "templates.acp.intensity": "Emotional intensity: medium to high",
+    "templates.custom.name": "Custom Dinner",
+    "templates.custom.purpose": "Your own theme — reconciliation, farewell, a milestone",
+    "templates.custom.fit": "Personal situations, e.g. reuniting with family after a long time apart",
+    "templates.custom.intensity": "Emotional intensity: depends on theme",
+    "templates.recommended": "Recommended starting point for first-time hosts",
+
+    "journey.title": "From Sign-up to After the Dinner",
+    "journey.subtitle": "A roughly 3-4 week journey, paced to fit you",
+    "journey.s1.title": "Sign-up & Intent Check",
+    "journey.s1.body": "We learn who you want to invite, roughly how many people, and your early motivation.",
+    "journey.s2.title": "Motivation Conversation",
+    "journey.s2.body": "A consultant helps you find the specific answer to \"what do I want to say, to whom.\"",
+    "journey.s3.title": "Theme & Conversation Design",
+    "journey.s3.body": "Together we pick a template and decide the pacing and depth of the cards.",
+    "journey.s4.title": "Guest Invitation Design",
+    "journey.s4.body": "Invitations never ambush your guests. You choose the tone.",
+    "journey.s5.title": "Venue & Catering",
+    "journey.s5.body": "2-3 options fitted to your budget, and a confirmed run-of-show.",
+    "journey.s6.title": "Dinner Day",
+    "journey.s6.body": "From warm welcome to the closing keepsake moment, we help hold the pace.",
+    "journey.s7.title": "Follow-up",
+    "journey.s7.body": "We check in on how it went, and offer professional referrals if needed.",
+
+    "support.title": "Pick the Support Level That Fits You",
+    "support.full.name": "Full Support",
+    "support.full.body": "Intent chat + conversation design + venue/catering coordination + an on-site facilitator throughout.",
+    "support.full.who": "Best for: first-time hosts, or higher-intensity ACP dinners",
+    "support.half.name": "Half Support",
+    "support.half.body": "Intent chat + conversation design + toolkit, with a facilitator present only at opening and closing.",
+    "support.half.who": "Best for: hosts with some experience and a good family communication base",
+    "support.diy.name": "DIY Kit",
+    "support.diy.body": "Conversation cards, host handbook and a venue/catering partner list — no facilitator on site.",
+    "support.diy.who": "Best for: repeat hosts, tighter budgets, or hosts who already have facilitation experience",
+    "support.pricingNote": "Exact pricing: to be confirmed with you during the intent conversation.",
+
+    "safety.title": "Safety & Boundaries We Actually Keep",
+    "safety.risk1.title": "Family Conflict Risk",
+    "safety.risk1.body": "Talking about death and end-of-life wishes can trigger resistance in Chinese family culture. We suggest starting with the gentler Legacy Dinner.",
+    "safety.risk2.title": "No Ambushing Guests",
+    "safety.risk2.body": "Invitations must clearly state the nature and theme of the dinner, so guests can prepare — and choose freely whether to come.",
+    "safety.risk3.title": "The Facilitator's Limits",
+    "safety.risk3.body": "An on-site facilitator only helps the flow move along and never intervenes in family decisions. If serious conflict arises, the gathering pauses for individual support.",
+    "safety.legal.title": "Important: Legal & Ethical Boundaries",
+    "safety.legal.body": "Our role is limited to facilitating conversation and providing general information. <strong>We are not legal or medical advisors, and we do not handle the signing of any legal document.</strong> If you wish to pursue a formal Advance Directive (AD) or Advance Care Plan (ACP) afterwards, we can provide referral information (e.g. your family doctor, the Hospital Authority's ACP service, or a lawyer) — the formal signing process is arranged separately.",
+    "safety.crisis.title": "If You Need Help Right Now",
+    "safety.crisis.body": "If you or someone close to you is currently in acute grief, family crisis, or emotional distress, the dinner can wait. You're not alone — please reach out first:",
+    "safety.crisis.line1": "Hospital Authority 24-hour Mental Health Support Hotline: 18111",
+    "safety.crisis.line2": "The Samaritan Befrienders Hong Kong 24-hour hotline: 2389 2222",
+    "safety.crisis.line3": "Caritas Family Crisis Support Centre hotline: 18288",
+
+    "wizard.title": "Start Planning Your Dinner",
+    "wizard.subtitle": "Answer a few questions and we'll put together an invitation you can send right away.",
+    "wizard.progress": "Step {current} of {total}",
+    "wizard.back": "Back",
+    "wizard.next": "Next",
+    "wizard.finish": "Generate Invitation",
+
+    "step1.title": "Who's coming to your dinner?",
+    "step1.subtitle": "You can select more than one.",
+    "step1.error": "Please choose at least one guest type.",
+    "opt.parents": "Parents",
+    "opt.partner": "Partner",
+    "opt.children": "Children",
+    "opt.siblings": "Siblings",
+    "opt.elders": "Grandparents / Elders",
+    "opt.friends": "Friends",
+    "opt.colleagues": "Colleagues",
+    "opt.notsure": "Not sure yet",
+
+    "step2.title": "What do you want this dinner to say?",
+    "step2.subtitle": "Pick the one closest to how you feel right now.",
+    "step2.error": "Please choose one reason so we can understand you better.",
+    "intent.acp": "I want to talk with my parents/elders about end-of-life care wishes",
+    "intent.loss": "My family recently went through serious illness or loss",
+    "intent.repair": "I want to repair or deepen my relationship with a partner or child",
+    "intent.legacy": "I simply want to pass down stories and speak from the heart",
+    "intent.selfPlan": "I want to sort out my own end-of-life wishes and share them",
+    "intent.explore": "No clear purpose yet, just want to try this kind of conversation",
+    "step2.crisisNote": "If this involves an urgent crisis, our team will speak with you first to make sure you have enough support.",
+
+    "step3.title": "Choose a Dinner Template",
+    "step3.subtitle": "Based on your last answer, we've suggested one — feel free to change it.",
+    "step3.error": "Please choose a dinner template.",
+    "step3.recommendedBadge": "Recommended for you",
+
+    "step4.title": "Tone of the Invitation",
+    "step4.subtitle": "How should the invitation sound?",
+    "step4.error": "Please choose a tone.",
+    "tone.warm": "Warm",
+    "tone.solemn": "Solemn",
+    "tone.light": "Light-hearted",
+
+    "step5.title": "Pick a Few Conversation Cards",
+    "step5.subtitle": "We suggest choosing 3 to 5 cards as conversation starters for the night.",
+    "step5.error": "Please choose 3 to 5 conversation cards.",
+    "step5.groupWarmup": "Warm-up Cards",
+    "step5.groupLegacy": "Legacy Cards",
+    "step5.groupAcp": "ACP Cards",
+    "step5.acpBadge": "Wording pending clinical/social-work review",
+
+    "card.w1": "What's the most memorable meal your family ever made?",
+    "card.w2": "If you described your mood this year as a dish, what would it be?",
+    "card.l1": "Which side of you do you most want your family to remember?",
+    "card.l2": "Is there something you've always wanted to thank someone for, or apologise for, but never said?",
+    "card.l3": "What's a decision in your life you're most proud of?",
+    "card.l4": "If you could leave behind only one object for the next generation, what would it be?",
+    "card.a1": "If one day you're not able to communicate, who do you want making decisions for you?",
+    "card.a2": "What does \"dignity\" mean to you in the final stage of life?",
+    "card.a3": "Where, and with whom, would you want to spend your final days?",
+
+    "step6.title": "Basic Details for the Dinner",
+    "step6.subtitle": "We'll use this to put together your invitation automatically.",
+    "field.hostName": "Your name",
+    "field.hostName.ph": "e.g. Ming",
+    "field.hostName.error": "Please enter your name.",
+    "field.dinnerTitle": "Dinner name (optional, custom)",
+    "field.dinnerTitle.ph": "e.g. Family Reunion Dinner",
+    "field.date": "Date",
+    "field.date.error": "Please choose a date.",
+    "field.time": "Time",
+    "field.time.error": "Please choose a time.",
+    "field.location": "Location (optional)",
+    "field.location.ph": "e.g. My home / restaurant name",
+    "field.guests": "Guest names (optional, comma-separated)",
+    "field.guests.ph": "e.g. Mum, Little Brother, Auntie",
+
+    "step7.title": "Review Your Invitation",
+    "step7.subtitle": "We've drafted the invitation for you — feel free to edit the wording before sending.",
+    "step7.letterLabel": "Invitation text (editable)",
+    "step7.principleNote": "Tip: the invitation should clearly state the nature and theme of the dinner — never ambush your guests, so they can prepare.",
+    "step7.sendWhatsapp": "Send Invitation via WhatsApp",
+    "step7.copyText": "Copy Text",
+    "step7.copied": "Copied!",
+    "step7.logNote": "(Local record only: a summary of this invitation is saved to a local log on this computer for your own team's follow-up — it is not uploaded or sent to anyone automatically.)",
+
+    "letter.greetingGeneric": "Dear all",
+    "letter.intro.warm": "There's something I've wanted to share for a while, so I'd love to invite you to a meal — to talk properly about our lives, and some things I've wanted to say but haven't yet.",
+    "letter.intro.solemn": "I would like to sincerely invite you to a special gathering, where we can sit quietly together and talk about life and death — a topic that matters to every one of us.",
+    "letter.intro.light": "Don't worry, nothing too serious! I just want us to enjoy a good meal together and talk about what's really on our minds, in a relaxed way.",
+    "letter.templateNote": "The theme of this dinner is: {template}.",
+    "letter.detailsIntro": "Details:",
+    "letter.detailDate": "Date: {date}",
+    "letter.detailTime": "Time: {time}",
+    "letter.detailLocation": "Location: {location}",
+    "letter.closing": "Let me know if you'd like to come — I'd love to see you there!",
+    "letter.signOff": "— {host}",
+
+    "footer.brandSub": "Death Over Dinner · Memento Amoris",
+    "footer.legal": "Our role is limited to facilitating conversation and providing general information. We are not legal or medical advisors, and we do not handle the signing or witnessing of any legal document.",
+    "footer.contactPending": "Contact: to be added",
+    "footer.copyright": "© {year} 三渡棧 Mementos (working name — brand identity in progress)",
+  }
+};
+
+window.DOD.currentLang = "tc";
+
+/* Translate a key for the current language, substituting {placeholders}. */
+window.DOD.t = function t(key, vars) {
+  var dict = window.DOD.I18N[window.DOD.currentLang] || window.DOD.I18N.tc;
+  var str = dict[key];
+  if (str === undefined) {
+    console.warn("[i18n] missing key:", key);
+    return key;
+  }
+  if (vars) {
+    Object.keys(vars).forEach(function (k) {
+      str = str.replace(new RegExp("\\{" + k + "\\}", "g"), vars[k]);
+    });
+  }
+  return str;
+};
+
+/* Apply the current language to every element carrying a data-i18n
+   attribute. Elements marked data-i18n-html are allowed to receive markup
+   (used only for the handful of strings that need a <strong> tag);
+   everything else gets plain text to avoid accidental HTML injection. */
+window.DOD.applyStaticI18n = function applyStaticI18n(root) {
+  var scope = root || document;
+  scope.querySelectorAll("[data-i18n]").forEach(function (el) {
+    var key = el.getAttribute("data-i18n");
+    var text = window.DOD.t(key);
+    if (el.hasAttribute("data-i18n-html")) {
+      el.innerHTML = text;
+    } else {
+      el.textContent = text;
+    }
+  });
+  scope.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {
+    el.setAttribute("placeholder", window.DOD.t(el.getAttribute("data-i18n-placeholder")));
+  });
+  scope.querySelectorAll("[data-i18n-aria-label]").forEach(function (el) {
+    el.setAttribute("aria-label", window.DOD.t(el.getAttribute("data-i18n-aria-label")));
+  });
+};
