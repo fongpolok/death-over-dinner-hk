@@ -25,6 +25,7 @@
   --navy-dark: #191f34;      /* night-post sky — dark section background */
   --navy-text: #f4efe1;      /* text on navy */
   --brass: #a9812f;          /* decorative accent only — grommets, seals */
+  --brown: #2e1503;          /* Western skin only — buttons/selection state, in place of airmail red */
   --line: #d9c8a3;           /* torn-paper / stitch line */
 
   --font-body: "Noto Sans HK", "PingFang HK", "Microsoft JhengHei", -apple-system, "Segoe UI", sans-serif;
@@ -40,6 +41,39 @@
   --space-5: 4rem;
   --max-width: 72rem;
 }
+
+/* ==========================================================================
+   Western theme — the site's second skin (item 4: one content source, a
+   theme switch). Chosen from the landing page's duality split, persisted
+   in localStorage, applied via [data-theme="western"] on <html>. Same
+   tokens, same structure everywhere; only the palette, type and a couple
+   of motifs (chevron border -> hairline + corner ornament, ink-stamp
+   button -> flat card) change. Contrast re-checked for this palette:
+   paper #f7f3ec / ink #2a2420: ~14.9:1. white / burgundy #7a1f2b: 8.9:1.
+   white / hunter #2f4635: 8.0:1. burgundy-text / paper: 7.1:1. */
+:root[data-theme="western"] {
+  --paper: #f7f3ec;
+  --paper-alt: #efe7d8;
+  --paper-white: #fffdf8;
+  --ink: #2a2420;
+  --ink-soft: #5a4f42;
+  --red: #7a1f2b;
+  --red-dark: #5c1720;
+  --blue: #2f4635;
+  --blue-dark: #20301f;
+  --navy-dark: #22201c;
+  --navy-text: #f7f3ec;
+  --brass: #b08d3f;
+  --line: #d8cdb4;
+
+  --font-body: "Cormorant Garamond", "Noto Serif HK", Georgia, serif;
+  --font-display: "Playfair Display", "Noto Serif HK", Georgia, serif;
+  --font-type: "EB Garamond", "Noto Serif HK", Georgia, serif;
+}
+/* Western skin swaps the postal chevron/ink-stamp motifs for a flatter,
+   engraved-invitation look — see each component's [data-theme="western"]
+   override alongside it below, rather than one giant block, so the
+   swap stays next to the rule it's overriding. */
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -61,6 +95,7 @@ h1, h2, h3, h4 {
   font-family: var(--font-display);
   line-height: 1.25;
   margin: 0 0 var(--space-2);
+  text-wrap: balance;
 }
 h1 { font-size: clamp(2rem, 5vw, 3.4rem); letter-spacing: -0.01em; }
 h2 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); }
@@ -106,6 +141,52 @@ a:hover { color: var(--blue-dark); }
 }
 .skip-link:focus { transform: translateY(0); }
 
+/* ---------------------------------- Intro splash ---------------------------------- */
+/* Full-viewport overlay for the ~5s Remotion intro. `paper` background
+   (not black/white) so there's no colour flash before the video paints,
+   and so the final washed-out frames of the video's own internal fade
+   blend into this rather than a mismatched canvas edge. */
+.intro-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+.intro-splash.is-fading { opacity: 0; }
+.intro-splash[hidden] { display: none; }
+
+.intro-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* letterbox rather than crop — the composition's text is framed for the full 16:9 */
+}
+
+.intro-skip {
+  position: absolute;
+  bottom: var(--space-3);
+  right: var(--space-3);
+  background: rgba(43, 38, 32, 0.55);
+  color: var(--navy-text);
+  border: 1px solid rgba(244, 239, 225, 0.5);
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  cursor: pointer;
+  min-height: 44px;
+}
+.intro-skip:hover { background: rgba(43, 38, 32, 0.75); }
+
+/* Respect reduced motion: no video, no wait — straight to the real page. */
+@media (prefers-reduced-motion: reduce) {
+  .intro-splash { display: none; }
+}
+
 .container {
   max-width: var(--max-width);
   margin: 0 auto;
@@ -123,7 +204,24 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 .section-dark a:hover { text-decoration-color: var(--navy-text); }
 
 .section-title { text-align: center; margin-bottom: var(--space-1); }
-.section-subtitle { text-align: center; max-width: 42rem; margin: 0 auto var(--space-4); opacity: 0.82; }
+.section-subtitle { text-align: center; max-width: 42rem; margin: 0 auto var(--space-4); opacity: 0.82; text-wrap: balance; }
+.centered-copy { max-width: 56rem; margin: 0 auto; text-align: center; }
+/* Centered CJK/mixed-script copy wraps at arbitrary character boundaries
+   with no natural word-spacing to guide it, so a plain line-wrap often
+   leaves one long line and a short widow -- especially noticeable at the
+   card widths the responsive grid produces mid-breakpoint. Balancing
+   keeps every line width close to even at whatever width the viewport
+   settles on, instead of only looking right at the one width it was
+   eyeballed at. Supported browsers only; unsupported ones just keep the
+   plain wrap they already had. */
+.centered-copy p, .section-title, .safety-card p, .note-card p, .qa-block p {
+  text-wrap: balance;
+}
+.notes-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.notes-grid-2 { grid-template-columns: repeat(2, 1fr); }
+.mt-space-4 { margin-top: var(--space-4); }
+.mt-space-3 { margin-top: var(--space-3); }
+@media (max-width: 780px) { .notes-grid-3, .notes-grid-2 { grid-template-columns: 1fr; } }
 
 /* ---------------------------------- Perforation (postage-stamp edge) ---------------------------------- */
 /* A repeating scalloped mask along one edge — the punched edge of a stamp
@@ -169,8 +267,9 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   gap: var(--space-2);
   padding-top: var(--space-1); padding-bottom: var(--space-1);
 }
-.brand { display: flex; align-items: center; gap: var(--space-2); text-decoration: none; color: var(--ink); }
+.brand { display: flex; align-items: center; gap: var(--space-2); text-decoration: none; color: var(--ink); flex: none; }
 .brand-sub { font-size: 0.8rem; opacity: 0.75; font-family: var(--font-type); letter-spacing: 0.02em; }
+.header-actions { flex: none; }
 
 @media (max-width: 640px) {
   /* the brand block, language toggle, and menu button don't fit one row
@@ -193,6 +292,12 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 .nav-menu {
   display: flex; align-items: center; flex-wrap: wrap; row-gap: 0.5rem;
   gap: var(--space-2); list-style: none; margin: 0; padding: 0;
+  /* fills whatever space is left after .brand and .header-actions instead
+     of sharing a three-way space-between with them, so the EN toggle's
+     position no longer shifts when this row wraps at mid widths */
+  flex: 1 1 auto;
+  min-width: 0;
+  justify-content: flex-end;
 }
 .nav-menu a { color: var(--ink); text-decoration: none; font-weight: 600; white-space: nowrap; }
 .nav-menu a:hover { color: var(--red); }
@@ -214,7 +319,9 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   .nav-toggle { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
   .nav-menu {
     position: absolute; left: 0; right: 0; top: 100%;
+    flex: none;
     flex-direction: column; align-items: stretch;
+    justify-content: flex-start;
     background: var(--paper);
     border-bottom: 3px dashed var(--line);
     padding: var(--space-2) var(--space-3);
@@ -230,24 +337,55 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
    filter (feTurbulence + displacementMap, defined once in index.html). */
 .btn[hidden] { display: none; }
 .btn {
+  position: relative;
+  isolation: isolate;
   display: inline-flex; align-items: center; justify-content: center;
   min-height: 48px;
   padding: 0.75rem 1.75rem;
   border-radius: var(--radius-md);
   font: inherit; font-weight: 700; font-size: 1rem;
   text-decoration: none;
-  border: 2px solid transparent;
+  white-space: nowrap;
+  flex-shrink: 0;
   cursor: pointer;
   transform: rotate(-0.6deg);
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+/* the rough ink-stamp edge lives on a background plate behind the label,
+   so the ::before gets the turbulence filter and the text stays crisp
+   instead of being displaced along with it. */
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  border: 2px solid transparent;
   filter: url(#stampRough);
-  transition: transform 0.15s ease, background 0.15s ease;
+  transition: background 0.15s ease;
 }
 .btn:hover:not(:disabled) { transform: rotate(-0.6deg) scale(1.02); }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; filter: url(#stampRough) grayscale(0.4); }
-.btn-primary { background: var(--red); color: #fff; box-shadow: 0 2px 0 var(--red-dark); }
-.btn-primary:hover:not(:disabled) { background: var(--red-dark); }
-.btn-secondary { background: transparent; color: var(--blue); border-color: var(--blue); }
-.btn-secondary:hover:not(:disabled) { background: var(--blue); color: #fff; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn:disabled::before { filter: url(#stampRough) grayscale(0.4); }
+.btn-primary { color: #fff; }
+.btn-primary::before { background: var(--red); box-shadow: 0 2px 0 var(--red-dark); }
+.btn-primary:hover:not(:disabled)::before { background: var(--red-dark); }
+.btn-secondary { color: var(--blue); }
+.btn-secondary::before { border-color: var(--blue); }
+.btn-secondary:hover:not(:disabled) { color: #fff; }
+.btn-secondary:hover:not(:disabled)::before { background: var(--blue); }
+
+/* Western skin: a flat, engraved card rather than a rotated rubber stamp. */
+:root[data-theme="western"] .btn {
+  transform: none;
+  border-radius: 2px;
+  letter-spacing: 0.03em;
+}
+:root[data-theme="western"] .btn::before { filter: none; }
+:root[data-theme="western"] .btn:hover:not(:disabled) { transform: none; }
+:root[data-theme="western"] .btn:disabled::before { filter: grayscale(0.4); }
+:root[data-theme="western"] .btn-primary::before { background: var(--brown); box-shadow: none; border-color: var(--brown); }
+:root[data-theme="western"] .btn-primary:hover:not(:disabled)::before { background: #1f0e02; }
 
 /* ---------------------------------- Hero: the sealed aerogramme ---------------------------------- */
 .hero { padding: var(--space-4) 0 var(--space-5); }
@@ -281,6 +419,18 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   border-top: 1px dashed rgba(43,38,32,0.14);
 }
 
+/* Western skin: a wax-seal border and a single hairline instead of the
+   airmail chevron stripe — same envelope/sheet structure, different mail. */
+:root[data-theme="western"] .envelope {
+  background: var(--paper-white);
+  border: 1px solid var(--brass);
+  box-shadow: 0 18px 40px rgba(20, 15, 10, 0.14), inset 0 0 0 6px var(--paper);
+}
+:root[data-theme="western"] .envelope-sheet::before {
+  border-top-style: solid;
+  border-top-color: rgba(42,36,32,0.16);
+}
+
 .postal-stamp {
   position: absolute;
   top: var(--space-2);
@@ -296,6 +446,18 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   color: var(--red-dark);
   transform: rotate(4deg);
   background: rgba(177,39,45,0.04);
+}
+
+/* Western skin: a round wax seal instead of a dotted postage stamp. */
+:root[data-theme="western"] .postal-stamp {
+  width: 76px; height: 76px;
+  border: none;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--red) 0%, var(--red-dark) 70%);
+  color: var(--navy-text);
+  font-family: var(--font-display);
+  transform: rotate(0deg);
+  box-shadow: 0 3px 8px rgba(20,15,10,0.35);
 }
 
 .airmail-stamp {
@@ -318,6 +480,16 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   white-space: normal;
   transform: rotate(-38deg);
   box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+/* Western skin: a straight ribbon banner, not a rotated postal endorsement. */
+:root[data-theme="western"] .airmail-stamp {
+  top: 0; left: var(--space-3);
+  width: auto; max-width: 70%;
+  transform: none;
+  border-radius: 0 0 2px 2px;
+  font-family: var(--font-type);
+  font-style: italic;
 }
 
 .hero h1 {
@@ -427,6 +599,10 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   border-top: 6px dashed var(--blue);
 }
 
+/* Western skin: square corners, hairline borders, no die-cut clip. */
+:root[data-theme="western"] .template-card { clip-path: none; border: 1px solid var(--line); }
+:root[data-theme="western"] .template-card:has(input:checked) { box-shadow: 0 0 0 2px var(--brown) inset; }
+
 .badge {
   display: inline-block;
   background: var(--blue);
@@ -439,8 +615,12 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   filter: url(#stampRough);
 }
 .badge-warning { background: var(--red); color: #fff; }
+:root[data-theme="western"] .badge { filter: none; border-radius: 2px; letter-spacing: 0.03em; }
 
-/* ---------------------------------- Journey: a postal route ---------------------------------- */
+/* ---------------------------------- Journey: a postal route, numbered 1-7 ---------------------------------- */
+/* A single connected flow rather than an unordered card grid: a through
+   line threads every numbered stop, in row form on wide screens and
+   column form once it wraps to a single column on narrow ones. */
 .timeline {
   position: relative;
   display: grid;
@@ -448,13 +628,14 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   gap: var(--space-3);
   counter-reset: step;
 }
-.timeline::before {
-  content: "";
-  position: absolute;
-  top: 1.1rem; left: 0; right: 0;
-  border-top: 2px dashed rgba(244,239,225,0.3);
-  z-index: 0;
-}
+/* No full-width connecting line at this breakpoint: with 7 stops and a
+   200px minimum column, the grid always wraps to multiple rows inside the
+   72rem container (7 columns would need ~1544px), so a single absolutely
+   positioned line spanning top:0 only ever touches the first row and
+   reads as broken/disconnected from every row after it. The numbered
+   badges alone carry the "route" reading once wrapped; the connecting
+   line only exists in the single-column mobile layout below, where
+   exactly one line can correctly thread every stop. */
 .timeline-item {
   position: relative;
   z-index: 1;
@@ -475,32 +656,36 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   font-weight: 700;
   margin-bottom: var(--space-2);
 }
+@media (max-width: 900px) {
+  .timeline { grid-template-columns: 1fr; padding-left: 2.6rem; }
+  .timeline::after {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0; left: 1.1rem;
+    border-left: 2px dashed rgba(244,239,225,0.3);
+    z-index: 0;
+  }
+  .timeline-item::before { position: absolute; left: -2.6rem; top: var(--space-3); margin-bottom: 0; }
+}
+:root[data-theme="western"] .timeline-item::before { border-color: var(--brass); color: var(--blue-dark); }
 
-/* ---------------------------------- Support tiers: postage denominations ---------------------------------- */
-.tier-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--space-3);
+/* Journey timeline arrival: the route is walked one stop at a time on
+   first scroll into view (staggered by journey-timeline.js), rather than
+   a generic scroll fade. Accepted via Impeccable live mode. Opacity/
+   translate/scale only, so it holds at every width the responsive grid
+   above already handles. */
+.motion-v1 .timeline-item {
+  opacity: 0;
+  translate: 0 16px;
+  transition: opacity 450ms cubic-bezier(0.16, 1, 0.3, 1), translate 450ms cubic-bezier(0.16, 1, 0.3, 1);
 }
-.tier-card {
-  position: relative;
-  background: var(--paper-white);
-  padding: var(--space-4) var(--space-3) var(--space-3);
-  border: 1px solid var(--line);
+.motion-v1.dod-motion-in .timeline-item { opacity: 1; translate: 0 0; }
+.motion-v1.pulse .timeline-item::before {
+  scale: 0.5;
+  transition: scale 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: inherit;
 }
-.tier-card::after {
-  /* brass grommet */
-  content: "";
-  position: absolute;
-  top: var(--space-2); right: var(--space-2);
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: var(--brass);
-  box-shadow: 0 0 0 2px var(--paper-white), 0 0 0 3px var(--brass);
-}
-.tier-card h3 { color: var(--blue-dark); font-family: var(--font-display); }
-.tier-card .who { font-size: 0.9rem; font-weight: 700; color: var(--ink-soft); }
-.pricing-note { text-align: center; margin-top: var(--space-3); color: var(--ink-soft); font-size: 0.95rem; font-family: var(--font-type); }
+.motion-v1.pulse.dod-motion-in .timeline-item::before { scale: 1; }
 
 /* ---------------------------------- Safety: official telegram notice ---------------------------------- */
 .safety-grid {
@@ -577,7 +762,7 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 }
 .wizard-progress-text { font-size: 0.9rem; font-weight: 700; color: var(--ink-soft); font-family: var(--font-type); }
 
-.step-subtitle { color: var(--ink-soft); }
+.step-subtitle { color: var(--ink-soft); text-wrap: balance; }
 .note-box {
   background: var(--paper-alt);
   border-top: 1px dashed var(--blue);
@@ -585,6 +770,7 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   padding: var(--space-2);
   font-size: 0.95rem;
   color: var(--ink-soft);
+  text-wrap: balance;
 }
 
 /* A quieter object than .note-box: one of the source document's longer
@@ -609,6 +795,7 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   font-style: italic;
   color: var(--ink-soft);
   margin: 0;
+  text-wrap: balance;
 }
 
 .choice-grid {
@@ -624,6 +811,7 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   min-height: 44px;
   background: var(--paper-white);
 }
+.choice-card span { text-wrap: balance; }
 .choice-card:has(input:checked) { border-color: var(--red); box-shadow: 0 0 0 2px var(--red) inset; background: #fdf1f1; }
 .choice-card input { width: 20px; height: 20px; flex-shrink: 0; }
 
@@ -644,7 +832,7 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 }
 .field input:focus-visible { border-bottom-color: var(--blue); }
 
-.field-label { display: block; font-weight: 700; margin-bottom: 0.35rem; }
+.field-label { display: block; font-weight: 700; margin-bottom: 0.35rem; text-wrap: balance; }
 .letter-textarea {
   width: 100%;
   font: inherit;
@@ -655,13 +843,14 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   resize: vertical;
 }
 .letter-actions { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-2); }
-.send-status { font-weight: 700; color: var(--blue-dark); }
+.send-status { font-weight: 700; color: var(--blue-dark); text-wrap: balance; }
 .small { font-size: 0.85rem; }
 .muted { color: var(--ink-soft); }
+.small, .muted { text-wrap: balance; }
 
 .wizard-error { color: var(--red-dark); font-weight: 700; min-height: 1.3em; }
 
-.wizard-nav { display: flex; justify-content: space-between; margin-top: var(--space-3); gap: var(--space-2); }
+.wizard-nav { display: flex; flex-wrap: wrap; justify-content: space-between; margin-top: var(--space-3); gap: var(--space-2); }
 
 /* ---------------------------------- Footer ---------------------------------- */
 .site-footer {
@@ -675,3 +864,324 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 .footer-logo-placeholder img { filter: brightness(0) invert(1) opacity(0.9); }
 .footer-legal { font-size: 0.9rem; opacity: 0.85; max-width: 46rem; }
 .footer-meta { display: flex; flex-wrap: wrap; gap: var(--space-3); font-size: 0.85rem; opacity: 0.8; font-family: var(--font-type); }
+.theme-toggle {
+  background: none;
+  border: 1px solid rgba(244,239,225,0.5);
+  color: var(--navy-text);
+  border-radius: 999px;
+  padding: 0.3rem 0.9rem;
+  font: inherit; font-size: 0.85rem;
+  cursor: pointer;
+  min-height: 36px;
+}
+.theme-toggle:hover { background: rgba(244,239,225,0.12); }
+
+/* Western skin: remaining component touch-ups that are simpler as one
+   block than scattered next to each HK-specific rule (removes rotation,
+   washi-tape, and the double-rule "official notice" border). */
+:root[data-theme="western"] .note-card,
+:root[data-theme="western"] .note-card:nth-child(1),
+:root[data-theme="western"] .note-card:nth-child(2),
+:root[data-theme="western"] .note-card:nth-child(3) { transform: none; }
+:root[data-theme="western"] .note-card::before { display: none; }
+:root[data-theme="western"] .note-card h3 { color: var(--blue-dark); font-family: var(--font-display); }
+:root[data-theme="western"] .safety-card::before { display: none; }
+:root[data-theme="western"] .legal-box,
+:root[data-theme="western"] .crisis-box,
+:root[data-theme="western"] .invitation-card { border-top-style: solid; border-bottom-style: solid; border-width: 1px; }
+:root[data-theme="western"] .legal-box h3,
+:root[data-theme="western"] .crisis-box h3,
+:root[data-theme="western"] .gate-panel h3 { font-family: var(--font-display); text-transform: none; letter-spacing: 0; font-style: italic; }
+:root[data-theme="western"] .choice-card:has(input:checked) { background: #f3ece5; border-color: var(--brown); box-shadow: 0 0 0 2px var(--brown) inset; }
+:root[data-theme="western"] .field input { border-radius: 2px; border-bottom: 1px solid var(--line); }
+:root[data-theme="western"] .site-header { border-bottom-style: solid; }
+:root[data-theme="western"] .nav-menu { border-bottom-style: solid; }
+:root[data-theme="western"] .site-footer { border-top-style: solid; }
+:root[data-theme="western"] .footer-logo-placeholder img { filter: brightness(0) invert(1) opacity(0.85); }
+
+/* ---------------------------------- Landing duality split ---------------------------------- */
+/* The very first choice on the homepage (item 4): one shared homepage,
+   split into a Hong Kong half and a Western half. Picking either sets
+   [data-theme] for the whole site (persisted, not just this page) and
+   reveals the regular homepage content below in that theme. */
+.duality {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: min(640px, 80vh);
+}
+.duality-half {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+.duality-half--hk {
+  background: repeating-linear-gradient(45deg, #b1272d 0, #b1272d 14px, #f4efe1 14px, #f4efe1 22px, #1a3e72 22px, #1a3e72 36px, #f4efe1 36px, #f4efe1 44px);
+}
+.duality-half--hk .duality-inner { background: #fbf8f0; color: #2b2620; }
+/* Flamenco / bullfight poster bill -- a Pica Pica-inspired departure for
+   the Western duality choice, accepted via Impeccable live mode. Gold
+   trim baked at its accepted value (0.6 of the 0-1 range). */
+.duality-half--western {
+  background: #b3122c;
+  position: relative;
+  overflow: hidden;
+}
+.duality-half--western::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 2px solid #e8c34a;
+  opacity: 0.76;
+  pointer-events: none;
+}
+.duality-half--western .duality-inner { background: transparent; border: none; box-shadow: none; }
+.duality-half--western .pica-icon { color: #e8c34a; opacity: 0.8; margin-bottom: 0.5rem; }
+.duality-half--western .duality-inner p { color: #f3d9c4; }
+.duality-half--western .duality-inner .btn {
+  background: #e8c34a;
+  color: #6d0f22;
+  border: 2px solid #fdf1df;
+  border-radius: 0;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.duality-inner {
+  padding: var(--space-4) var(--space-3);
+  max-width: 26rem;
+  box-shadow: 0 10px 30px rgba(20,15,10,0.18);
+}
+.duality-half--hk .duality-inner h2 { font-family: "Noto Serif HK", Georgia, serif; }
+.duality-half--western .duality-inner h2 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 2.6rem;
+  letter-spacing: 0.02em;
+  color: #fdf1df;
+  text-transform: uppercase;
+}
+.duality-half:hover .duality-inner { transform: scale(1.02); }
+.duality-inner { transition: transform 0.2s ease; }
+.duality-note {
+  text-align: center;
+  text-wrap: balance;
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  background: var(--paper-alt);
+}
+@media (max-width: 720px) {
+  .duality { grid-template-columns: 1fr; }
+}
+
+.home-teasers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-3);
+}
+.teaser-card {
+  display: block;
+  background: var(--paper-white);
+  border: 1px solid var(--line);
+  padding: var(--space-3);
+  text-decoration: none;
+  color: inherit;
+}
+.teaser-card:hover { border-color: var(--red); }
+.teaser-card h3 { color: var(--red-dark); margin-bottom: 0.3rem; }
+.teaser-card p { color: var(--ink-soft); margin: 0; font-size: 0.95rem; }
+
+/* Education topic cards: the whole card is a link (item 2 -- each topic is
+   a button to its own page); the visible .btn is a label, not a second
+   interactive control, so it doesn't trap a separate tab stop. */
+.topic-card { display: flex; flex-direction: column; height: 100%; }
+.topic-card p { flex: 1; margin-bottom: var(--space-2); }
+.topic-card-btn { align-self: flex-start; pointer-events: none; }
+
+/* Education sub-pages: sources/disclaimer reuses the "official notice"
+   double-rule language already established for legal content elsewhere. */
+.sources-box { background: var(--paper-white); padding: var(--space-3); margin-top: var(--space-4); border-top: 3px double var(--ink); border-bottom: 3px double var(--ink); }
+.sources-box h3 { font-family: var(--font-type); text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.95rem; color: var(--blue-dark); }
+.sources-box ul { padding-left: 1.25rem; }
+.sources-box .disclaimer-text { font-size: 0.9rem; color: var(--ink-soft); margin-top: var(--space-2); }
+.back-link-row { margin-bottom: var(--space-3); }
+.qa-block { margin-bottom: var(--space-3); }
+.qa-block h3 { color: var(--blue-dark); font-size: 1.05rem; margin-bottom: 0.3rem; }
+.qa-block p { color: var(--ink-soft); }
+:root[data-theme="western"] .teaser-card:hover { border-color: var(--blue); }
+:root[data-theme="western"] .teaser-card h3 { color: var(--blue-dark); font-family: var(--font-display); }
+
+/* ---------------------------------- Wizard precaution gate ---------------------------------- */
+/* Shown once, before step 1: the legal/ethics boundary plus a grief/crisis
+   precaution the host must actively acknowledge before the questionnaire
+   itself becomes reachable. */
+.gate-panel {
+  background: var(--paper-white);
+  border: 1px solid var(--line);
+  padding: var(--space-4);
+}
+.gate-panel .legal-box,
+.gate-panel .crisis-box { margin-top: var(--space-3); }
+.gate-precaution {
+  /* Same "official notice" double-rule language as .legal-box/.crisis-box
+     (in red, to read as the more urgent of the two), not a generic
+     colored side-tab. */
+  background: var(--paper-alt);
+  border-top: 3px double var(--red);
+  border-bottom: 3px double var(--red);
+  padding: var(--space-3);
+  margin-top: var(--space-3);
+}
+.gate-precaution h3 { color: var(--red-dark); margin-bottom: 0.4rem; }
+.gate-ack {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px dashed var(--line);
+}
+.gate-ack input { width: 22px; height: 22px; flex-shrink: 0; margin-top: 0.15rem; }
+.gate-ack label { font-weight: 700; }
+.gate-actions { margin-top: var(--space-3); display: flex; justify-content: flex-end; }
+
+/* ---------------------------------- Fixed invitation card (not a textarea) ---------------------------------- */
+/* Item 9: the generated invitation is a formatted, read-only document —
+   organisation statement, topics, run-of-show + menu, then a disclaimer —
+   styled as an actual invitation rather than a plain text block. */
+.invitation-card {
+  /* A genuinely handwritten feel (item: "mimic a true hand writing
+     letter"), accepted via Impeccable live mode -- brush kai script for
+     the HK theme, cursive for the Western theme (see the [data-theme]
+     override below), faint ruled lines, and a gentle alternating tilt per
+     paragraph for organic rhythm rather than perfectly ruled type.
+
+     The card's own background carries a muted airmail chevron (same
+     stripe recipe as .envelope in the hero, at reduced tint so it reads
+     as vintage stationery rather than a bold modern stripe); the ::before
+     "sheet" below is an opaque paper layer inset from the edge, so the
+     chevron only peeks out as a thin trim -- like a letter still sitting
+     inside its par-avion envelope. */
+  position: relative;
+  isolation: isolate;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(177,39,45,0.5) 0, rgba(177,39,45,0.5) 14px,
+    var(--paper) 14px, var(--paper) 22px,
+    rgba(26,62,114,0.5) 22px, rgba(26,62,114,0.5) 36px,
+    var(--paper) 36px, var(--paper) 44px
+  );
+  border-top: 3px double var(--ink);
+  border-bottom: 3px double var(--ink);
+  padding: var(--space-4);
+  font-family: "LXGW WenKai TC", "Noto Serif HK", Georgia, serif;
+  font-size: 1.15em;
+  line-height: 1.9;
+}
+.invitation-card::before {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  z-index: -1;
+  background: var(--paper-white);
+  background-image: repeating-linear-gradient(to bottom, transparent, transparent 2.35em, rgba(122,31,43,0.10) 2.36em);
+}
+.invitation-card > p:nth-of-type(odd) { rotate: -0.35deg; }
+.invitation-card > p:nth-of-type(even) { rotate: 0.3deg; }
+.invitation-card .invitation-org {
+  text-align: center;
+  font-family: var(--font-type);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  border-bottom: 1px dashed var(--line);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.invitation-card h4 {
+  font-family: var(--font-type);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: var(--blue-dark);
+  text-transform: uppercase;
+  margin: var(--space-3) 0 0.4rem;
+}
+.invitation-card ul { margin: 0 0 var(--space-2); padding-left: 1.3rem; }
+.invitation-card .invitation-disclaimer {
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--line);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+:root[data-theme="western"] .invitation-card {
+  font-family: "Caveat", "Playfair Display", Georgia, serif;
+  font-size: 1.4em;
+  line-height: 1.7;
+  background: var(--paper-white);
+  border: 1px solid var(--brass);
+}
+:root[data-theme="western"] .invitation-card::before {
+  inset: 6px;
+  box-shadow: inset 0 0 0 4px var(--paper);
+}
+
+.send-panel {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px dashed var(--line);
+}
+
+/* ---------------------------------- Print: the letter, alone, on paper ---------------------------------- */
+@media print {
+  /* Print just the letter. Earlier this hid everything else with
+     visibility:hidden and absolutely positioned the card at 0,0 -- but
+     visibility:hidden keeps full layout height, and the card's nearest
+     positioned ancestor is .wizard-panel, not the page, so the card
+     printed wherever .wizard-panel happened to fall in that still-tall
+     invisible layout (extra blank leading pages, sometimes clipped).
+     display:none on the specific known siblings collapses their height
+     to zero instead, so the card is simply the first thing in normal
+     flow and paginates correctly on its own if it runs past one page. */
+  .site-header, .site-footer,
+  #wizard-panel-wrap > .section-title,
+  #wizard-panel-wrap > .section-subtitle,
+  .wizard-progress-track, .wizard-progress-text,
+  #wizard-live, #wizard-error,
+  .wizard-nav,
+  #wizard-step-content > :not(.invitation-card) {
+    display: none !important;
+  }
+  .wizard-panel {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    background: none !important;
+  }
+  .invitation-card {
+    border-color: #000;
+    box-shadow: none;
+    /* Backgrounds (the chevron letterhead trim and the paper sheet
+       behind it) are suppressed by default when printing unless the
+       visitor has "print background graphics" on -- force them on so
+       the letterhead actually prints instead of coming out as plain
+       white stock. */
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .invitation-card::before {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

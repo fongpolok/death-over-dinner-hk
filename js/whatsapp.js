@@ -1,7 +1,10 @@
-/* Turns the generated letter into a WhatsApp share link / clipboard copy,
-   and makes a best-effort, non-blocking attempt to log the submission to
-   the optional local Flask backend. None of this is required for sending
-   to work — if the backend isn't running, the log call just fails quietly. */
+/* Turns the generated letter into a WhatsApp share link, a clipboard copy,
+   a print/PDF export, or a real emailed invitation -- and makes a
+   best-effort, non-blocking attempt to log the submission to the optional
+   local Flask backend. None of this is required for WhatsApp/copy/print to
+   work -- if the backend isn't running, the log call just fails quietly.
+   Email is the one action that genuinely needs the backend (and, on top
+   of that, real SMTP credentials configured there -- see backend/.env). */
 window.DOD = window.DOD || {};
 
 (function () {
@@ -33,7 +36,7 @@ window.DOD = window.DOD || {};
   }
 
   function logSubmissionBestEffort(payload) {
-    fetch("/api/submissions", {
+    return fetch("/api/submissions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -51,9 +54,53 @@ window.DOD = window.DOD || {};
     opts.copyBtn.addEventListener("click", function () {
       copyToClipboard(opts.getText()).then(function () {
         logSubmissionBestEffort(Object.assign({ action: "copy" }, opts.getPayload()));
-        opts.statusEl.textContent = window.DOD.t("step7.copied");
+        opts.statusEl.textContent = window.DOD.t("step8.copied");
         setTimeout(function () { opts.statusEl.textContent = ""; }, 3000);
       });
     });
+
+    if (opts.printBtn) {
+      opts.printBtn.addEventListener("click", function () {
+        logSubmissionBestEffort(Object.assign({ action: "print" }, opts.getPayload()));
+        window.print();
+      });
+    }
+  };
+
+  /* Item 9.6: actually send the invitation by email through the optional
+     Flask backend's /api/send-invitation endpoint. Honest about the two
+     ways this can end without an error: real SMTP success, or the backend
+     being reachable but not yet configured with credentials -- the UI text
+     for each case is supplied by the caller (wizard.js) via opts, since
+     the exact wording is themed/translated there. */
+  window.DOD.sendInvitationEmail = function sendInvitationEmail(opts) {
+    opts.statusEl.textContent = window.DOD.t("letter.emailSending");
+    opts.sendBtn.disabled = true;
+    fetch("/api/send-invitation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(Object.assign({
+        to_email: opts.email,
+        to_phone: opts.phone,
+        letter_text: opts.getText()
+      }, opts.getPayload()))
+    })
+      .then(function (res) { return res.json().then(function (body) { return { ok: res.ok, body: body }; }); })
+      .then(function (result) {
+        opts.sendBtn.disabled = false;
+        if (result.ok && result.body.status === "sent") {
+          opts.statusEl.textContent = window.DOD.t("letter.emailSentOk");
+        } else if (result.ok && result.body.status === "logged_not_configured") {
+          opts.statusEl.textContent = window.DOD.t("letter.emailNotConfigured");
+        } else {
+          opts.statusEl.textContent = window.DOD.t("letter.emailFailed");
+        }
+      })
+      .catch(function () {
+        // The backend isn't running at all -- same honest fallback as the
+        // "not configured" case: recorded nowhere server-side, so say so.
+        opts.sendBtn.disabled = false;
+        opts.statusEl.textContent = window.DOD.t("letter.emailNotConfigured");
+      });
   };
 })();

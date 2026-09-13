@@ -30,7 +30,11 @@ window.DOD = window.DOD || {};
     date: "",
     time: "",
     location: "",
-    guestNames: ""
+    guestNames: "",
+    allergy: null, // "yes" | "no" | null (unanswered)
+    allergyDetails: "",
+    email: "",
+    phone: ""
   };
 
   var els = {}; // cached DOM refs, filled by init()
@@ -69,7 +73,8 @@ window.DOD = window.DOD || {};
       case THEME_STEP_END: return state.cards.size >= 3 && state.cards.size <= 5;
       case GUEST_STEP:
         return state.guestTypes.size > 0 && !!state.tone &&
-          !!state.hostName.trim() && !!state.date && !!state.time;
+          !!state.hostName.trim() && !!state.date && !!state.time &&
+          (state.allergy !== "yes" || !!state.allergyDetails.trim());
       default: return true; // the other theme steps are opt-in, not gated
     }
   }
@@ -87,28 +92,89 @@ window.DOD = window.DOD || {};
     }
   }
 
-  function buildLetter() {
-    var lines = [];
+  /* The selected cards, each paired with the theme title it came from --
+     shared by both the plain-text letter and the fixed invitation-card
+     rendering, so the two presentations can never drift apart. */
+  function selectedTopics() {
+    var topics = [];
+    themeGroups().forEach(function (group) {
+      group.cards.forEach(function (card) {
+        if (state.cards.has(card.id)) {
+          topics.push({ theme: t(group.titleI18n), text: t(card.i18n) });
+        }
+      });
+    });
+    return topics;
+  }
+
+  function guestGreeting() {
     var names = state.guestNames.trim();
     var sep = window.DOD.currentLang === "tc" ? "、" : ", ";
-    var greeting = names
+    return names
       ? names.split(",").map(function (s) { return s.trim(); }).filter(Boolean).join(sep)
       : t("letter.greetingGeneric");
-    lines.push(greeting + (window.DOD.currentLang === "tc" ? "：" : ","));
+  }
+
+  function templateLabel() {
+    return state.dinnerTitle.trim() || t("templates." + deriveTemplateId() + ".name");
+  }
+
+  /* Item 9: everything the fixed invitation needs, structured once and
+     consumed by both the read-only HTML card and the plain-text version
+     used for WhatsApp / clipboard / the email body. */
+  function buildLetterData() {
+    return {
+      orgStatement: t("letter.orgStatement", { host: state.hostName.trim() }),
+      greeting: guestGreeting(),
+      intro: t("letter.intro." + state.tone),
+      template: templateLabel(),
+      topics: selectedTopics(),
+      flow: [t("letter.flow1"), t("letter.flow2"), t("letter.flow3"), t("letter.flow4"), t("letter.flow5")],
+      menu: [t("letter.menu1"), t("letter.menu2"), t("letter.menu3")],
+      date: state.date ? formatDate(state.date) : "",
+      time: state.time || "",
+      location: state.location.trim(),
+      allergy: state.allergy === "yes" ? state.allergyDetails.trim() : "",
+      closing: t("letter.closing"),
+      host: state.hostName.trim(),
+      disclaimer: t("letter.disclaimerBody")
+    };
+  }
+
+  function buildLetterText() {
+    var d = buildLetterData();
+    var lines = [];
+    lines.push(d.orgStatement);
     lines.push("");
-    lines.push(t("letter.intro." + state.tone));
+    lines.push(d.greeting + (window.DOD.currentLang === "tc" ? "：" : ","));
     lines.push("");
-    var templateLabel = state.dinnerTitle.trim() || t("templates." + deriveTemplateId() + ".name");
-    lines.push(t("letter.templateNote", { template: templateLabel }));
+    lines.push(d.intro);
+    lines.push("");
+    lines.push(t("letter.templateNote", { template: d.template }));
+    if (d.topics.length) {
+      lines.push("");
+      lines.push(t("letter.topicsHeading"));
+      d.topics.forEach(function (topic) { lines.push("- " + topic.text + "（" + topic.theme + "）"); });
+      lines.push(t("letter.topicsNote"));
+    }
+    lines.push("");
+    lines.push(t("letter.flowHeading"));
+    d.flow.forEach(function (line, i) { lines.push((i + 1) + ". " + line); });
+    lines.push("");
+    lines.push(t("letter.menuHeading"));
+    d.menu.forEach(function (line) { lines.push("- " + line); });
     lines.push("");
     lines.push(t("letter.detailsIntro"));
-    if (state.date) lines.push(t("letter.detailDate", { date: formatDate(state.date) }));
-    if (state.time) lines.push(t("letter.detailTime", { time: state.time }));
-    if (state.location.trim()) lines.push(t("letter.detailLocation", { location: state.location.trim() }));
+    if (d.date) lines.push(t("letter.detailDate", { date: d.date }));
+    if (d.time) lines.push(t("letter.detailTime", { time: d.time }));
+    if (d.location) lines.push(t("letter.detailLocation", { location: d.location }));
+    if (d.allergy) lines.push(t("letter.detailAllergy", { allergy: d.allergy }));
     lines.push("");
-    lines.push(t("letter.closing"));
+    lines.push(d.closing);
     lines.push("");
-    lines.push(t("letter.signOff", { host: state.hostName.trim() }));
+    lines.push(t("letter.signOff", { host: d.host }));
+    lines.push("");
+    lines.push(t("letter.disclaimerHeading") + "：" + d.disclaimer);
     return lines.join("\n");
   }
 
@@ -153,9 +219,18 @@ window.DOD = window.DOD || {};
   /* Shared renderer for the five theme steps (2-6): a reflection to read,
      then this theme's cards to optionally choose from. Validation for the
      whole set lives on the last theme step (see isStepValid). */
-  function renderThemeStep(container, group) {
+  function renderThemeStep(container, group, isFirstTheme) {
     container.appendChild(el("h3", { id: "step-heading", tabindex: "-1", text: t(group.titleI18n) }));
     container.appendChild(el("p", { class: "step-subtitle", text: t("theme.subtitle", { picked: state.cards.size }) }));
+    // Item 8 (instructions): stated once, on the first theme step, rather
+    // than repeated on every one of the five -- skipping a whole theme and
+    // picking more than one card within a theme are both fine.
+    if (isFirstTheme) {
+      container.appendChild(el("div", { class: "note-box" }, [
+        el("strong", { text: t("wizard.instructions.title") }),
+        el("p", { text: t("wizard.instructions.body") })
+      ]));
+    }
     renderReflection(container, group.reflectionI18n);
     if (group.needsReview) {
       container.appendChild(el("span", { class: "badge badge-warning", text: t("step5.acpBadge") }));
@@ -206,7 +281,7 @@ window.DOD = window.DOD || {};
       container.appendChild(el("p", { class: "muted small", text: t("step1.reflectionNote") }));
     },
 
-    2: function (container) { renderThemeStep(container, themeGroupForStep(2)); },
+    2: function (container) { renderThemeStep(container, themeGroupForStep(2), true); },
     3: function (container) { renderThemeStep(container, themeGroupForStep(3)); },
     4: function (container) { renderThemeStep(container, themeGroupForStep(4)); },
     5: function (container) { renderThemeStep(container, themeGroupForStep(5)); },
@@ -252,40 +327,176 @@ window.DOD = window.DOD || {};
       form.appendChild(textField("dinnerTitle", "field.dinnerTitle", "field.dinnerTitle.ph", state.dinnerTitle, false, function (v) { state.dinnerTitle = v; }));
       form.appendChild(textField("date", "field.date", null, state.date, true, function (v) { state.date = v; }, "date"));
       form.appendChild(textField("time", "field.time", null, state.time, true, function (v) { state.time = v; }, "time"));
-      form.appendChild(textField("location", "field.location", "field.location.ph", state.location, false, function (v) { state.location = v; }));
+
+      var locationField = textField("location", "field.location", "field.location.ph", state.location, false, function (v) { state.location = v; });
+      // Item 10: a wheelchair-accessibility note placed right where the
+      // host is already thinking about the venue, not buried elsewhere.
+      locationField.appendChild(el("p", { class: "muted small", text: t("field.location.accessibilityNote") }));
+      form.appendChild(locationField);
+
       form.appendChild(textField("guests", "field.guests", "field.guests.ph", state.guestNames, false, function (v) { state.guestNames = v; }));
       container.appendChild(form);
+
+      // Item 8: food allergy / dietary restriction question, with a detail
+      // field that only appears (and is only required) when the answer is
+      // "yes" -- kept as its own block since it isn't a plain text field.
+      var allergyBlock = el("div", { class: "field" });
+      allergyBlock.appendChild(el("h4", { text: t("field.allergy.question") }));
+      var detailsWrap = el("div", { class: "field", id: "allergy-details-wrap" });
+      detailsWrap.hidden = state.allergy !== "yes";
+      var detailsInput = el("textarea", { id: "field-allergyDetails", class: "letter-textarea", rows: "2", placeholder: t("field.allergy.detailsPlaceholder") });
+      detailsInput.value = state.allergyDetails;
+      detailsInput.addEventListener("input", function () { state.allergyDetails = detailsInput.value; refreshNav(); });
+      detailsWrap.appendChild(el("label", { for: "field-allergyDetails", text: t("field.allergy.detailsLabel") + " *" }));
+      detailsWrap.appendChild(detailsInput);
+
+      renderChoiceList(allergyBlock, [
+        { id: "yes", i18n: "field.allergy.yes" },
+        { id: "no", i18n: "field.allergy.no" }
+      ], {
+        type: "radio", name: "allergy", selectedValue: state.allergy,
+        groupLabel: t("field.allergy.question"),
+        onChange: function (id) {
+          state.allergy = id;
+          detailsWrap.hidden = id !== "yes";
+          refreshNav();
+        }
+      });
+      allergyBlock.appendChild(detailsWrap);
+      container.appendChild(allergyBlock);
     },
 
     8: function (container) {
       container.appendChild(el("h3", { id: "step-heading", tabindex: "-1", text: t("step8.title") }));
       container.appendChild(el("p", { class: "step-subtitle", text: t("step8.subtitle") }));
-      var textareaId = "letter-text";
-      container.appendChild(el("label", { for: textareaId, class: "field-label", text: t("step8.letterLabel") }));
-      var textarea = el("textarea", { id: textareaId, rows: "12", class: "letter-textarea" });
-      textarea.value = buildLetter();
-      container.appendChild(textarea);
+
+      // Item 9.5: a fixed, read-only rendering -- no textarea, no editing.
+      // The plain-text version used for WhatsApp/copy/email is built from
+      // the exact same buildLetterData() so the two can't disagree.
+      container.appendChild(el("p", { class: "field-label", text: t("step8.letterLabel") }));
+      container.appendChild(renderInvitationCard());
       container.appendChild(el("p", { class: "note-box", text: t("step8.principleNote") }));
 
       var actions = el("div", { class: "letter-actions" });
       var waBtn = el("button", { type: "button", class: "btn btn-primary", id: "btn-send-whatsapp", text: t("step8.sendWhatsapp") });
       var copyBtn = el("button", { type: "button", class: "btn btn-secondary", id: "btn-copy-text", text: t("step8.copyText") });
+      var printBtn = el("button", { type: "button", class: "btn btn-secondary", id: "btn-print-pdf", text: t("step8.printPdf") });
       var status = el("span", { id: "send-status", class: "send-status", role: "status", "aria-live": "polite" });
       actions.appendChild(waBtn);
       actions.appendChild(copyBtn);
+      actions.appendChild(printBtn);
       actions.appendChild(status);
       container.appendChild(actions);
+      container.appendChild(el("p", { class: "muted small", text: t("download.instructions") }));
       container.appendChild(el("p", { class: "muted small", text: t("step8.logNote") }));
 
       window.DOD.wireSendActions({
-        getText: function () { return textarea.value; },
+        getText: buildLetterText,
         whatsappBtn: waBtn,
         copyBtn: copyBtn,
+        printBtn: printBtn,
         statusEl: status,
-        getPayload: function () { return buildSubmissionPayload(); }
+        getPayload: buildSubmissionPayload
       });
+
+      // Item 9.6: collect email/phone and actually attempt to send.
+      var sendPanel = el("div", { class: "send-panel" });
+      sendPanel.appendChild(el("h4", { text: t("letter.sendSection.title") }));
+      sendPanel.appendChild(el("p", { class: "step-subtitle", text: t("letter.sendSection.subtitle") }));
+      var sendForm = el("div", { class: "field-grid" });
+
+      var emailInput = el("input", { type: "email", id: "field-email", value: state.email, placeholder: t("field.email.ph"), required: "required" });
+      emailInput.addEventListener("input", function () { state.email = emailInput.value; refreshNav(); });
+      sendForm.appendChild(el("div", { class: "field" }, [
+        el("label", { for: "field-email", text: t("field.email") + " *" }),
+        emailInput
+      ]));
+
+      var phoneInput = el("input", { type: "tel", id: "field-phone", value: state.phone, placeholder: t("field.phone.ph") });
+      phoneInput.addEventListener("input", function () { state.phone = phoneInput.value; });
+      sendForm.appendChild(el("div", { class: "field" }, [
+        el("label", { for: "field-phone", text: t("field.phone") }),
+        phoneInput
+      ]));
+      sendPanel.appendChild(sendForm);
+
+      var emailStatus = el("span", { id: "email-status", class: "send-status", role: "status", "aria-live": "polite" });
+      var emailBtn = el("button", { type: "button", class: "btn btn-primary", id: "btn-send-email", text: t("letter.sendEmail") });
+      emailBtn.addEventListener("click", function () {
+        if (!isValidEmail(state.email)) {
+          emailStatus.textContent = t("field.email.error");
+          return;
+        }
+        window.DOD.sendInvitationEmail({
+          email: state.email.trim(),
+          phone: state.phone.trim(),
+          getText: buildLetterText,
+          sendBtn: emailBtn,
+          statusEl: emailStatus,
+          getPayload: buildSubmissionPayload
+        });
+      });
+      var emailActions = el("div", { class: "letter-actions" });
+      emailActions.appendChild(emailBtn);
+      emailActions.appendChild(emailStatus);
+      sendPanel.appendChild(emailActions);
+      container.appendChild(sendPanel);
     }
   };
+
+  function isValidEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+  }
+
+  /* The read-only invitation itself: org statement, topics, run-of-show +
+     menu, then a disclaimer -- item 9's fixed design, built from the same
+     structured data as the plain-text version above. */
+  function renderInvitationCard() {
+    var d = buildLetterData();
+    var card = el("div", { class: "invitation-card" });
+    card.appendChild(el("div", { class: "invitation-org", text: d.orgStatement }));
+    card.appendChild(el("p", { text: d.greeting + (window.DOD.currentLang === "tc" ? "：" : ",") }));
+    card.appendChild(el("p", { text: d.intro }));
+    card.appendChild(el("p", { text: t("letter.templateNote", { template: d.template }) }));
+
+    if (d.topics.length) {
+      card.appendChild(el("h4", { text: t("letter.topicsHeading") }));
+      var topicsList = el("ul");
+      d.topics.forEach(function (topic) {
+        topicsList.appendChild(el("li", { text: topic.text + "（" + topic.theme + "）" }));
+      });
+      card.appendChild(topicsList);
+      card.appendChild(el("p", { class: "muted small", text: t("letter.topicsNote") }));
+    }
+
+    card.appendChild(el("h4", { text: t("letter.flowHeading") }));
+    var flowList = el("ul");
+    d.flow.forEach(function (line) { flowList.appendChild(el("li", { text: line })); });
+    card.appendChild(flowList);
+
+    card.appendChild(el("h4", { text: t("letter.menuHeading") }));
+    var menuList = el("ul");
+    d.menu.forEach(function (line) { menuList.appendChild(el("li", { text: line })); });
+    card.appendChild(menuList);
+
+    card.appendChild(el("h4", { text: t("letter.detailsIntro") }));
+    var detailsList = el("ul");
+    if (d.date) detailsList.appendChild(el("li", { text: t("letter.detailDate", { date: d.date }) }));
+    if (d.time) detailsList.appendChild(el("li", { text: t("letter.detailTime", { time: d.time }) }));
+    if (d.location) detailsList.appendChild(el("li", { text: t("letter.detailLocation", { location: d.location }) }));
+    if (d.allergy) detailsList.appendChild(el("li", { text: t("letter.detailAllergy", { allergy: d.allergy }) }));
+    card.appendChild(detailsList);
+
+    card.appendChild(el("p", { text: d.closing }));
+    card.appendChild(el("p", { text: t("letter.signOff", { host: d.host }) }));
+
+    var disclaimer = el("div", { class: "invitation-disclaimer" });
+    disclaimer.appendChild(el("strong", { text: t("letter.disclaimerHeading") }));
+    disclaimer.appendChild(el("p", { text: d.disclaimer }));
+    card.appendChild(disclaimer);
+
+    return card;
+  }
 
   function buildSubmissionPayload() {
     // state.privateNote is deliberately excluded: it's the host's own
@@ -302,7 +513,12 @@ window.DOD = window.DOD || {};
       time: state.time,
       location: state.location,
       guestNames: state.guestNames,
+      allergy: state.allergy,
+      allergyDetails: state.allergy === "yes" ? state.allergyDetails : "",
       lang: window.DOD.currentLang
+      // state.email/state.phone are attached by sendInvitationEmail()
+      // itself (to_email/to_phone) rather than duplicated here; the
+      // WhatsApp/copy/print actions never need or see them.
     };
   }
 
@@ -377,9 +593,14 @@ window.DOD = window.DOD || {};
     renderStep();
   }
 
+  var initialised = false;
+
   window.DOD.wizard = {
-    init: init,
-    rerender: renderStep, // called by app.js after a language switch
+    init: function () { initialised = true; init(); },
+    // called by app.js after a language switch -- a no-op until init() has
+    // actually run (e.g. the precaution gate in wizard.html hasn't been
+    // acknowledged yet, so els.content etc. don't exist)
+    rerender: function () { if (initialised) renderStep(); },
     getState: function () { return state; }
   };
 })();
