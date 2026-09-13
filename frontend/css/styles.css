@@ -25,7 +25,7 @@
   --navy-dark: #191f34;      /* night-post sky — dark section background */
   --navy-text: #f4efe1;      /* text on navy */
   --brass: #a9812f;          /* decorative accent only — grommets, seals */
-  --brown: #5c3a24;          /* Western skin only — selection state, in place of airmail red */
+  --brown: #2e1503;          /* Western skin only — buttons/selection state, in place of airmail red */
   --line: #d9c8a3;           /* torn-paper / stitch line */
 
   --font-body: "Noto Sans HK", "PingFang HK", "Microsoft JhengHei", -apple-system, "Segoe UI", sans-serif;
@@ -95,6 +95,7 @@ h1, h2, h3, h4 {
   font-family: var(--font-display);
   line-height: 1.25;
   margin: 0 0 var(--space-2);
+  text-wrap: balance;
 }
 h1 { font-size: clamp(2rem, 5vw, 3.4rem); letter-spacing: -0.01em; }
 h2 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); }
@@ -203,8 +204,19 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 .section-dark a:hover { text-decoration-color: var(--navy-text); }
 
 .section-title { text-align: center; margin-bottom: var(--space-1); }
-.section-subtitle { text-align: center; max-width: 42rem; margin: 0 auto var(--space-4); opacity: 0.82; }
+.section-subtitle { text-align: center; max-width: 42rem; margin: 0 auto var(--space-4); opacity: 0.82; text-wrap: balance; }
 .centered-copy { max-width: 56rem; margin: 0 auto; text-align: center; }
+/* Centered CJK/mixed-script copy wraps at arbitrary character boundaries
+   with no natural word-spacing to guide it, so a plain line-wrap often
+   leaves one long line and a short widow -- especially noticeable at the
+   card widths the responsive grid produces mid-breakpoint. Balancing
+   keeps every line width close to even at whatever width the viewport
+   settles on, instead of only looking right at the one width it was
+   eyeballed at. Supported browsers only; unsupported ones just keep the
+   plain wrap they already had. */
+.centered-copy p, .section-title, .safety-card p, .note-card p, .qa-block p {
+  text-wrap: balance;
+}
 .notes-grid-3 { grid-template-columns: repeat(3, 1fr); }
 .notes-grid-2 { grid-template-columns: repeat(2, 1fr); }
 .mt-space-4 { margin-top: var(--space-4); }
@@ -333,6 +345,8 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   border-radius: var(--radius-md);
   font: inherit; font-weight: 700; font-size: 1rem;
   text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
   cursor: pointer;
   transform: rotate(-0.6deg);
   transition: transform 0.15s ease, color 0.15s ease;
@@ -370,7 +384,8 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 :root[data-theme="western"] .btn::before { filter: none; }
 :root[data-theme="western"] .btn:hover:not(:disabled) { transform: none; }
 :root[data-theme="western"] .btn:disabled::before { filter: grayscale(0.4); }
-:root[data-theme="western"] .btn-primary::before { box-shadow: none; border-color: var(--red); }
+:root[data-theme="western"] .btn-primary::before { background: var(--brown); box-shadow: none; border-color: var(--brown); }
+:root[data-theme="western"] .btn-primary:hover:not(:disabled)::before { background: #1f0e02; }
 
 /* ---------------------------------- Hero: the sealed aerogramme ---------------------------------- */
 .hero { padding: var(--space-4) 0 var(--space-5); }
@@ -747,7 +762,7 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 }
 .wizard-progress-text { font-size: 0.9rem; font-weight: 700; color: var(--ink-soft); font-family: var(--font-type); }
 
-.step-subtitle { color: var(--ink-soft); }
+.step-subtitle { color: var(--ink-soft); text-wrap: balance; }
 .note-box {
   background: var(--paper-alt);
   border-top: 1px dashed var(--blue);
@@ -755,6 +770,7 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   padding: var(--space-2);
   font-size: 0.95rem;
   color: var(--ink-soft);
+  text-wrap: balance;
 }
 
 /* A quieter object than .note-box: one of the source document's longer
@@ -779,6 +795,7 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   font-style: italic;
   color: var(--ink-soft);
   margin: 0;
+  text-wrap: balance;
 }
 
 .choice-grid {
@@ -794,6 +811,7 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   min-height: 44px;
   background: var(--paper-white);
 }
+.choice-card span { text-wrap: balance; }
 .choice-card:has(input:checked) { border-color: var(--red); box-shadow: 0 0 0 2px var(--red) inset; background: #fdf1f1; }
 .choice-card input { width: 20px; height: 20px; flex-shrink: 0; }
 
@@ -814,7 +832,7 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 }
 .field input:focus-visible { border-bottom-color: var(--blue); }
 
-.field-label { display: block; font-weight: 700; margin-bottom: 0.35rem; }
+.field-label { display: block; font-weight: 700; margin-bottom: 0.35rem; text-wrap: balance; }
 .letter-textarea {
   width: 100%;
   font: inherit;
@@ -825,13 +843,14 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   resize: vertical;
 }
 .letter-actions { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-2); }
-.send-status { font-weight: 700; color: var(--blue-dark); }
+.send-status { font-weight: 700; color: var(--blue-dark); text-wrap: balance; }
 .small { font-size: 0.85rem; }
 .muted { color: var(--ink-soft); }
+.small, .muted { text-wrap: balance; }
 
 .wizard-error { color: var(--red-dark); font-weight: 700; min-height: 1.3em; }
 
-.wizard-nav { display: flex; justify-content: space-between; margin-top: var(--space-3); gap: var(--space-2); }
+.wizard-nav { display: flex; flex-wrap: wrap; justify-content: space-between; margin-top: var(--space-3); gap: var(--space-2); }
 
 /* ---------------------------------- Footer ---------------------------------- */
 .site-footer {
@@ -954,6 +973,7 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 .duality-inner { transition: transform 0.2s ease; }
 .duality-note {
   text-align: center;
+  text-wrap: balance;
   padding: var(--space-2) var(--space-3);
   font-size: 0.9rem;
   color: var(--ink-soft);
@@ -1125,11 +1145,43 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 
 /* ---------------------------------- Print: the letter, alone, on paper ---------------------------------- */
 @media print {
-  body * { visibility: hidden; }
-  .invitation-card, .invitation-card * { visibility: visible; }
+  /* Print just the letter. Earlier this hid everything else with
+     visibility:hidden and absolutely positioned the card at 0,0 -- but
+     visibility:hidden keeps full layout height, and the card's nearest
+     positioned ancestor is .wizard-panel, not the page, so the card
+     printed wherever .wizard-panel happened to fall in that still-tall
+     invisible layout (extra blank leading pages, sometimes clipped).
+     display:none on the specific known siblings collapses their height
+     to zero instead, so the card is simply the first thing in normal
+     flow and paginates correctly on its own if it runs past one page. */
+  .site-header, .site-footer,
+  #wizard-panel-wrap > .section-title,
+  #wizard-panel-wrap > .section-subtitle,
+  .wizard-progress-track, .wizard-progress-text,
+  #wizard-live, #wizard-error,
+  .wizard-nav,
+  #wizard-step-content > :not(.invitation-card) {
+    display: none !important;
+  }
+  .wizard-panel {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    background: none !important;
+  }
   .invitation-card {
-    position: absolute; left: 0; top: 0; width: 100%;
     border-color: #000;
     box-shadow: none;
+    /* Backgrounds (the chevron letterhead trim and the paper sheet
+       behind it) are suppressed by default when printing unless the
+       visitor has "print background graphics" on -- force them on so
+       the letterhead actually prints instead of coming out as plain
+       white stock. */
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .invitation-card::before {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 }

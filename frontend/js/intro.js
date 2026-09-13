@@ -23,9 +23,26 @@
     try { sessionStorage.setItem(SESSION_KEY, "1"); } catch (e) { /* ignore */ }
   }
 
+  function hasChosenTheme() {
+    try {
+      return localStorage.getItem("dod-theme") !== null;
+    } catch (e) {
+      return true; // storage blocked: don't force a redirect loop, just land on the default theme
+    }
+  }
+
   function init() {
     var splash = document.getElementById("intro-splash");
     if (!splash) return;
+
+    // The video already played once this tab (or is being skipped by
+    // prefers-reduced-motion) with no style chosen yet -- e.g. the visitor
+    // came straight back from theme-select.html without picking one. Don't
+    // replay the animation; just send them to make the choice.
+    if ((prefersReducedMotion() || alreadyShownThisTab()) && !hasChosenTheme()) {
+      window.location.replace("theme-select.html");
+      return;
+    }
 
     if (prefersReducedMotion() || alreadyShownThisTab()) {
       splash.hidden = true;
@@ -41,6 +58,13 @@
     function hide() {
       if (hidden) return;
       hidden = true;
+      // First-time visitor: the animation just finished (or was skipped
+      // mid-play) and no style has been chosen yet -- go choose one rather
+      // than crossfade into a still theme-less landing page.
+      if (!hasChosenTheme()) {
+        window.location.replace("theme-select.html");
+        return;
+      }
       splash.classList.add("is-fading");
       window.setTimeout(function () {
         splash.hidden = true;

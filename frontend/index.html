@@ -19,7 +19,8 @@
   rubber ink-stamp buttons, Noto Serif/Sans HK body with Special Elite for
   postmarks and numerals. A second, Western skin (ivory/wax-seal/Playfair
   Display) sits behind [data-theme="western"] on <html> — same markup,
-  different mail, chosen from the duality split below.
+  different mail, chosen on theme-select.html before a first-time visitor
+  ever reaches this page (see intro.js).
   STORY: A host arrives carrying only the topic's weight; recognises their
   own unsent letter home; believes this org will actually help them send
   it; opens the wizard to draft it for real.
@@ -41,8 +42,9 @@
   Intro splash: a ~7.5s Remotion-rendered animation (a letter, scribble
   resolving into the headline, HK stamp) that plays once per tab, then
   crossfades into the real page beneath it. See intro-video/ for the
-  Remotion source. Purely decorative and theme-agnostic (it plays before
-  the duality choice below), and never a barrier to content.
+  Remotion source. Purely decorative and theme-agnostic; on a first-time
+  visit intro.js sends the visitor to theme-select.html once it finishes,
+  rather than revealing this page still theme-less underneath.
 -->
 <div id="intro-splash" class="intro-splash">
   <video
@@ -83,30 +85,6 @@
 </header>
 
 <main id="main">
-
-  <!-- Item 4: landing duality — same content, a Hong Kong half and a Western half. -->
-  <section id="duality-section">
-    <div class="duality">
-      <button type="button" class="duality-half duality-half--hk" id="duality-hk">
-        <div class="duality-inner">
-          <h2 data-i18n="duality.hk.label">港式</h2>
-          <p data-i18n="duality.hk.desc">郵箋、郵票與唐樓招牌式的港式視覺語言。</p>
-          <span class="btn btn-primary" data-i18n="duality.hk.cta">以港式風格瀏覽</span>
-        </div>
-      </button>
-      <button type="button" class="duality-half duality-half--western" id="duality-western">
-        <div class="duality-inner">
-          <svg class="pica-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-            <path d="M16 28 L16 6" /><path d="M16 28 L6 10" /><path d="M16 28 L26 10" /><path d="M16 28 L10 6" /><path d="M16 28 L22 6" />
-          </svg>
-          <h2 data-i18n="duality.western.label">西式</h2>
-          <p data-i18n="duality.western.desc">米白信箋、蠟封與襯線字體的西式邀請函美學。</p>
-          <span class="btn btn-secondary" data-i18n="duality.western.cta">以西式風格瀏覽</span>
-        </div>
-      </button>
-    </div>
-    <p class="duality-note" data-i18n="duality.subtitle">同一套內容，兩種呈現方式——你可以隨時在頁腳切換。</p>
-  </section>
 
   <section class="hero" id="top">
     <div class="container">
@@ -176,20 +154,5 @@
 <script src="js/i18n.js"></script>
 <script src="js/intro.js"></script>
 <script src="js/app.js"></script>
-<script>
-  (function () {
-    var hk = document.getElementById("duality-hk");
-    var western = document.getElementById("duality-western");
-    function choose(theme) {
-      document.documentElement.setAttribute("data-theme", theme);
-      try { localStorage.setItem("dod-theme", theme); } catch (e) { /* ignore */ }
-      var label = document.getElementById("theme-toggle-label");
-      if (label) { label.setAttribute("data-i18n", theme === "western" ? "nav.themeToggle.toHk" : "nav.themeToggle.toWestern"); window.DOD.applyStaticI18n(document); }
-      document.getElementById("top").scrollIntoView({ behavior: "smooth" });
-    }
-    if (hk) hk.addEventListener("click", function () { choose("hk"); });
-    if (western) western.addEventListener("click", function () { choose("western"); });
-  })();
-</script>
 </body>
 </html>

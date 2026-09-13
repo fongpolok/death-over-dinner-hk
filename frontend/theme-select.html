@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>揀選風格 · 三渡棧 Mementos（暫定名稱）</title>
+<meta name="description" content="揀選你想瀏覽生死晚餐網站嘅風格：港式或西式。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@400;600;700&family=Noto+Serif+HK:wght@600;700&family=Special+Elite&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Cormorant+Garamond:wght@400;600&family=EB+Garamond:ital@0;1&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="stampRough" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="noise" seed="7"></feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="3"></feDisplacementMap>
+  </filter>
+</svg>
+
+<a class="skip-link" href="#main" data-i18n="skip.toMain">跳到主要內容</a>
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="index.html">
+      <img src="assets/logo-placeholder.svg" alt="三渡棧 Mementos — 暫定郵戳標記" width="120" height="36">
+      <span class="brand-sub" data-i18n="nav.brandSub">生死晚餐 · Memento Amoris</span>
+    </a>
+    <button class="lang-toggle" id="lang-toggle" type="button" aria-pressed="false">
+      <span id="lang-toggle-label" data-i18n="nav.langToggle">EN</span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+  <section id="duality-section">
+    <div class="container centered-copy">
+      <h1 class="section-title" data-i18n="duality.title">揀選一種風格開始</h1>
+    </div>
+    <div class="duality">
+      <button type="button" class="duality-half duality-half--hk" id="duality-hk">
+        <div class="duality-inner">
+          <h2 data-i18n="duality.hk.label">港式</h2>
+          <p data-i18n="duality.hk.desc">郵箋、郵票與唐樓招牌式的港式視覺語言。</p>
+          <span class="btn btn-primary" data-i18n="duality.hk.cta">以港式風格瀏覽</span>
+        </div>
+      </button>
+      <button type="button" class="duality-half duality-half--western" id="duality-western">
+        <div class="duality-inner">
+          <svg class="pica-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M16 28 L16 6" /><path d="M16 28 L6 10" /><path d="M16 28 L26 10" /><path d="M16 28 L10 6" /><path d="M16 28 L22 6" />
+          </svg>
+          <h2 data-i18n="duality.western.label">西式</h2>
+          <p data-i18n="duality.western.desc">米白信箋、蠟封與襯線字體的西式邀請函美學。</p>
+          <span class="btn btn-secondary" data-i18n="duality.western.cta">以西式風格瀏覽</span>
+        </div>
+      </button>
+    </div>
+    <p class="duality-note" data-i18n="duality.subtitle">同一套內容，兩種呈現方式——你可以隨時在頁腳切換。</p>
+  </section>
+</main>
+
+<script src="js/i18n.js"></script>
+<script>
+  (function () {
+    window.DOD.currentLang = (function () {
+      try { return localStorage.getItem("dod-lang") === "en" ? "en" : "tc"; } catch (e) { return "tc"; }
+    })();
+    document.documentElement.lang = window.DOD.t("meta.htmlLang");
+    window.DOD.applyStaticI18n(document);
+
+    var langToggle = document.getElementById("lang-toggle");
+    langToggle.setAttribute("aria-pressed", String(window.DOD.currentLang === "en"));
+    langToggle.addEventListener("click", function () {
+      window.DOD.currentLang = window.DOD.currentLang === "tc" ? "en" : "tc";
+      document.documentElement.lang = window.DOD.t("meta.htmlLang");
+      window.DOD.applyStaticI18n(document);
+      langToggle.setAttribute("aria-pressed", String(window.DOD.currentLang === "en"));
+      try { localStorage.setItem("dod-lang", window.DOD.currentLang); } catch (e) { /* ignore */ }
+    });
+
+    // Where to send the visitor once a style is chosen: back to whichever
+    // page sent them here (wizard.html, service.html, ...), or index.html
+    // by default when reached directly / from the intro splash.
+    var params = new URLSearchParams(window.location.search);
+    var next = params.get("next") || "index.html";
+
+    function choose(theme) {
+      try { localStorage.setItem("dod-theme", theme); } catch (e) { /* ignore */ }
+      window.location.replace(next);
+    }
+    document.getElementById("duality-hk").addEventListener("click", function () { choose("hk"); });
+    document.getElementById("duality-western").addEventListener("click", function () { choose("western"); });
+  })();
+</script>
+</body>
+</html>

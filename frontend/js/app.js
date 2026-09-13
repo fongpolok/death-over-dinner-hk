@@ -36,22 +36,29 @@
   /* Item 4: the landing page's duality choice (Hong Kong / Western) sets
      this for the whole site, not just the page it was chosen on. A footer
      control lets it be changed again from anywhere. */
-  function applyTheme(theme) {
+  function applyTheme(theme, persist) {
     document.documentElement.setAttribute("data-theme", theme);
     var label = document.getElementById("theme-toggle-label");
     if (label) label.setAttribute("data-i18n", theme === "western" ? "nav.themeToggle.toHk" : "nav.themeToggle.toWestern");
     window.DOD.applyStaticI18n(document);
-    try { localStorage.setItem("dod-theme", theme); } catch (e) { /* ignore */ }
+    // Only an explicit toggle-click counts as the visitor choosing a theme.
+    // Applying the resolved (or default) theme on every page load must NOT
+    // itself write to storage, or intro.js's "has a theme ever been picked"
+    // check (used to route a first-time visitor to theme-select.html) would
+    // always see a value and never trigger.
+    if (persist) {
+      try { localStorage.setItem("dod-theme", theme); } catch (e) { /* ignore */ }
+    }
   }
 
   function initTheme() {
     var saved = null;
     try { saved = localStorage.getItem("dod-theme"); } catch (e) { /* ignore */ }
-    applyTheme(saved === "western" ? "western" : "hk");
+    applyTheme(saved === "western" ? "western" : "hk", false);
     var toggle = document.getElementById("theme-toggle");
     if (toggle) {
       toggle.addEventListener("click", function () {
-        applyTheme(document.documentElement.getAttribute("data-theme") === "western" ? "hk" : "western");
+        applyTheme(document.documentElement.getAttribute("data-theme") === "western" ? "hk" : "western", true);
       });
     }
   }
