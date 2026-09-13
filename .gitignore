@@ -2,6 +2,13 @@
 backend/__pycache__/
 *.pyc
 
+# Real SMTP credentials -- see backend/.env.example
+backend/.env
+
+# Remotion build output/cache
+intro-video/node_modules/
+intro-video/out/
+
 # Runtime logs
 data/*.log
 
@@ -10,6 +17,7 @@ data/*.log
 .impeccable/review/
 .impeccable/hook.cache.json
 .impeccable/config.local.json
+.impeccable/live/
 
 # OS
 .DS_Store

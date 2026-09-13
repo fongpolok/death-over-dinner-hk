@@ -63,6 +63,96 @@
         "value": "0.46rem",
         "createdAt": "2026-08-31T13:52:37.968Z",
         "reason": "Claude: .postal-stamp mobile step of the postmark role, documented in DESIGN.md Typography."
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(20,15,10,0.35)",
+        "createdAt": "2026-09-13T10:31:29.097Z",
+        "reason": "matches this file's existing convention of near-black box-shadow tints at varying opacity (e.g. rgba(25,20,10,0.18) on .envelope, rgba(25,20,10,0.08) on .note-card) used for the new Western wax-seal shadow, not a new arbitrary color"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "playfair display",
+        "createdAt": "2026-09-13T10:34:20.720Z",
+        "reason": "user confirmed: item 4 requires a second, Western-style visual theme distinct from the HK skin; this is its display typeface"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "cormorant garamond",
+        "createdAt": "2026-09-13T10:34:20.753Z",
+        "reason": "user confirmed: item 4 Western theme body typeface"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "eb garamond",
+        "createdAt": "2026-09-13T10:34:20.781Z",
+        "reason": "user confirmed: item 4 Western theme small/postmark-equivalent typeface"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#fffdf8",
+        "createdAt": "2026-09-13T11:17:50.411Z",
+        "reason": "the duality landing preview must show both HK and Western swatches side-by-side before either theme is chosen, so it can't use var(--paper-white) (which only resolves to whichever theme is currently active) -- this literal is the Western theme's own --paper-white token, hardcoded only for this simultaneous-preview context"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#b08d3f",
+        "createdAt": "2026-09-13T11:17:50.440Z",
+        "reason": "same duality-preview constraint as #fffdf8 above -- this is the Western theme's own --brass token, hardcoded because var(--brass) isn't yet Western-scoped at this point in the page"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#b3122c",
+        "createdAt": "2026-09-13T11:50:01.463Z",
+        "reason": "user confirmed via Impeccable live mode: accepted flamenco-poster departure for the Western duality button, background red"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#e8c34a",
+        "createdAt": "2026-09-13T11:50:01.495Z",
+        "reason": "user confirmed via Impeccable live mode: accepted flamenco-poster departure, gold frame/icon/button accent"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#f3d9c4",
+        "createdAt": "2026-09-13T11:50:01.525Z",
+        "reason": "user confirmed via Impeccable live mode: accepted flamenco-poster departure, body text on the red card"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#6d0f22",
+        "createdAt": "2026-09-13T11:50:01.555Z",
+        "reason": "user confirmed via Impeccable live mode: accepted flamenco-poster departure, button text on gold"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#fdf1df",
+        "createdAt": "2026-09-13T11:50:01.587Z",
+        "reason": "user confirmed via Impeccable live mode: accepted flamenco-poster departure, headline colour and button border"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "2.6rem",
+        "createdAt": "2026-09-13T11:50:01.618Z",
+        "reason": "user confirmed via Impeccable live mode: accepted flamenco-poster departure's poster-scale headline size"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "lxgw wenkai tc",
+        "createdAt": "2026-09-13T12:32:35.004Z",
+        "reason": "user confirmed via Impeccable live mode: accepted handwritten-letter treatment for .invitation-card, HK-theme brush kai script"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "caveat",
+        "createdAt": "2026-09-13T12:32:35.034Z",
+        "reason": "user confirmed via Impeccable live mode: accepted handwritten-letter treatment for .invitation-card, Western-theme cursive"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(122,31,43,0.10)",
+        "createdAt": "2026-09-13T12:32:35.062Z",
+        "reason": "user confirmed via Impeccable live mode: accepted handwritten-letter treatment, faint ruled-paper lines behind the invitation text"
       }
     ]
   }

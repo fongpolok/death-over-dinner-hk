@@ -27,6 +27,7 @@ from flask import Flask, Response, jsonify, request, send_from_directory
 
 from .config import Config
 from .logging_setup import configure_logging
+from .mailer import EmailSendError, send_invitation_email
 
 
 def create_app(config: Config | None = None) -> Flask:
@@ -59,6 +60,42 @@ def create_app(config: Config | None = None) -> Flask:
         # local development aid, not a data store.
         logger.info("submission action=%s payload=%s", payload.get("action", "unknown"), json.dumps(payload, ensure_ascii=False))
         return jsonify({"status": "logged"}), 201
+
+    @app.post("/api/send-invitation")
+    def send_invitation() -> Response:
+        payload = request.get_json(silent=True)
+        if not isinstance(payload, dict):
+            return jsonify({"error": "expected a JSON object"}), 400
+
+        to_email = (payload.get("to_email") or "").strip()
+        if not to_email or "@" not in to_email:
+            return jsonify({"error": "a valid to_email is required"}), 400
+
+        # Always log the attempt -- this is the record a coordinator follows
+        # up from, whether or not SMTP is configured yet.
+        logger.info(
+            "invitation email requested to=%s configured=%s payload=%s",
+            to_email, config.is_email_configured, json.dumps(payload, ensure_ascii=False),
+        )
+
+        if not config.is_email_configured:
+            # Honest degrade, not a fake success: nothing was sent, and the
+            # frontend's copy for this exact status says so to the host.
+            return jsonify({"status": "logged_not_configured"}), 200
+
+        try:
+            send_invitation_email(
+                config,
+                to_email=to_email,
+                host_name=payload.get("hostName", ""),
+                dinner_title=payload.get("dinnerTitle", ""),
+                letter_text=payload.get("letter_text", ""),
+                logger=logger,
+            )
+        except EmailSendError:
+            return jsonify({"status": "send_failed"}), 502
+
+        return jsonify({"status": "sent"}), 200
 
     logger.info("App ready. Serving static files from %s", config.static_dir)
     return app
