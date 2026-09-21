@@ -744,17 +744,18 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   gap: var(--space-3);
   margin-bottom: var(--space-4);
 }
-/* Service page: same treatment as .template-grid -- three level columns
-   that shrink with the page instead of auto-fit orphaning the third card
-   onto its own row, stacking only once they're too narrow to read. */
-#safety .safety-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+/* Three-card grids (service page safety cards, education page topics):
+   same treatment as .template-grid -- three level columns that shrink
+   with the page instead of auto-fit orphaning the third card onto its own
+   row, stacking only once they're too narrow to read. */
+:is(#safety, #topics) .safety-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 874.98px) {
-  #safety .safety-grid { gap: var(--space-2); }
-  #safety .safety-card { padding: var(--space-2); }
+  :is(#safety, #topics) .safety-grid { gap: var(--space-2); }
+  #safety .safety-card, #topics .teaser-card { padding: var(--space-2); }
   #safety .safety-card::before { left: var(--space-2); }
 }
 @media (max-width: 600px) {
-  #safety .safety-grid { grid-template-columns: 1fr; }
+  :is(#safety, #topics) .safety-grid { grid-template-columns: 1fr; }
 }
 .safety-card {
   position: relative;
