@@ -39,12 +39,41 @@ def send_invitation_email(
     message["From"] = f"{config.smtp_from_name} <{config.smtp_from_email}>"
     message["To"] = to_email
     message.set_content(letter_text)
+    _send(config, message, logger, description=f"invitation email to {to_email}")
 
+
+def send_enquiry_email(
+    config: Config,
+    *,
+    name: str,
+    email: str,
+    phone: str,
+    enquiry_type: str,
+    message_text: str,
+    logger: logging.Logger,
+) -> None:
+    if not config.is_enquiry_email_configured:
+        raise RuntimeError("send_enquiry_email called without an enquiry inbox configured")
+
+    message = EmailMessage()
+    message["Subject"] = f"網上查詢 Enquiry [{enquiry_type}] — {name}"
+    message["From"] = f"{config.smtp_from_name} <{config.smtp_from_email}>"
+    message["To"] = config.enquiry_to_email
+    # Replying in the inbox goes straight to the person who asked.
+    message["Reply-To"] = email
+    message.set_content(
+        f"姓名 Name: {name}\n電郵 Email: {email}\n電話 Phone: {phone or '-'}\n"
+        f"類別 Type: {enquiry_type}\n\n{message_text}\n"
+    )
+    _send(config, message, logger, description=f"enquiry from {email}")
+
+
+def _send(config: Config, message: EmailMessage, logger: logging.Logger, *, description: str) -> None:
     try:
         with smtplib.SMTP(config.smtp_host, config.smtp_port, timeout=15) as smtp:
             smtp.starttls()
             smtp.login(config.smtp_user, config.smtp_password)
             smtp.send_message(message)
     except (smtplib.SMTPException, OSError) as exc:
-        logger.error("Failed to send invitation email to %s: %s", to_email, exc)
+        logger.error("Failed to send %s: %s", description, exc)
         raise EmailSendError(str(exc)) from exc

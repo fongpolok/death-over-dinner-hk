@@ -141,6 +141,28 @@ a:hover { color: var(--blue-dark); }
 }
 .skip-link:focus { transform: translateY(0); }
 
+/* ---------------------------------- Back to top (injected by back-to-top.js) ---------------------------------- */
+.back-to-top {
+  position: fixed;
+  right: max(var(--space-2), env(safe-area-inset-right));
+  bottom: max(var(--space-2), env(safe-area-inset-bottom));
+  z-index: 60; /* above the sticky header (50), below the intro splash (200) */
+  width: 48px; height: 48px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: var(--paper-white);
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(25, 20, 10, 0.18);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.back-to-top[hidden] { display: none; }
+.back-to-top:hover { background: var(--ink); color: var(--paper); }
+.back-to-top:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+:root[data-theme="western"] .back-to-top { border-width: 1px; border-color: var(--brown); color: var(--brown); }
+:root[data-theme="western"] .back-to-top:hover { background: var(--brown); color: var(--paper-white); }
+
 /* ---------------------------------- Intro splash ---------------------------------- */
 /* Full-viewport overlay for the ~5s Remotion intro. `paper` background
    (not black/white) so there's no colour flash before the video paints,
@@ -302,6 +324,9 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 .nav-menu a { color: var(--ink); text-decoration: none; font-weight: 600; white-space: nowrap; }
 .nav-menu a:hover { color: var(--red); }
 .nav-menu .btn { white-space: nowrap; }
+/* .nav-menu a (0,1,1) otherwise outranks .btn-primary's white label (0,1,0),
+   leaving dark ink on red. */
+.nav-menu a.btn-primary, .nav-menu a.btn-primary:hover { color: #fff; }
 
 .lang-toggle, .btn-ghost {
   background: none;
@@ -315,7 +340,10 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 }
 .lang-toggle:hover { background: var(--ink); color: var(--paper); }
 
-@media (max-width: 720px) {
+/* Below 950px the six nav items no longer fit on one row beside the brand
+   and the EN toggle, so they collapse into the 選單 dropdown instead of
+   wrapping onto a second line. */
+@media (max-width: 949.98px) {
   .nav-toggle { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
   .nav-menu {
     position: absolute; left: 0; right: 0; top: 100%;
@@ -328,6 +356,9 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
     display: none;
   }
   .nav-menu.is-open { display: flex; }
+  /* keep the CTA stamp-sized in the dropdown; stretched to full width its
+     slight rotation reads as a crooked banner */
+  .nav-menu .btn { align-self: flex-start; }
   .header-actions { display: flex; align-items: center; gap: var(--space-1); }
 }
 
@@ -529,8 +560,10 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 }
 
 /* ---------------------------------- About: pinned correspondence, not identical cards ---------------------------------- */
-.letter-body { max-width: 62ch; }
-.letter-body p { color: var(--ink-soft); }
+.letter-body { max-width: 120ch; margin-inline: auto; text-align: center; }
+/* the global p { max-width: 70ch } would otherwise pin each paragraph to
+   the left inside the wider, centred block */
+.letter-body p { color: var(--ink-soft); max-width: none; text-wrap: balance; }
 
 .margin-notes {
   display: grid;
@@ -570,10 +603,23 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 }
 
 /* ---------------------------------- Templates: three different pieces of mail ---------------------------------- */
+/* Always three equal columns, never auto-fit: with a 260px minimum the
+   third (custom) card dropped onto its own half-width row below ~875px,
+   out of line with the other two. The columns shrink with the page
+   instead, and only stack -- all three, full width -- once they'd be too
+   narrow to read. */
 .template-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-3);
+}
+.template-card strong { display: block; margin-bottom: 0.4rem; text-wrap: balance; }
+@media (max-width: 874.98px) {
+  .template-grid { gap: var(--space-2); }
+  .template-grid .template-card { padding: var(--space-2); }
+}
+@media (max-width: 600px) {
+  .template-grid { grid-template-columns: 1fr; }
 }
 .template-card {
   position: relative;
@@ -821,16 +867,36 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 .field-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-2); }
 .field { display: flex; flex-direction: column; gap: 0.35rem; }
 .field label { font-weight: 700; }
-.field input {
+.field input, .field select, .field textarea {
   font: inherit;
   padding: 0.65rem 0.85rem;
   border: 1px solid var(--line);
   border-bottom: 2px solid var(--ink-soft);
   border-radius: 0;
   background: var(--paper-white);
+  color: var(--ink);
   min-height: 44px;
 }
-.field input:focus-visible { border-bottom-color: var(--blue); }
+.field textarea { resize: vertical; min-height: 9rem; }
+.field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible { border-bottom-color: var(--blue); }
+
+/* Contact page enquiry form */
+.enquiry-form {
+  max-width: 48rem;
+  margin: 0 auto;
+  background: var(--paper-white);
+  border: 1px solid var(--line);
+  padding: var(--space-4);
+  box-shadow: 0 12px 40px rgba(25, 20, 10, 0.15);
+}
+.enquiry-message { margin-top: var(--space-2); }
+.enquiry-consent { display: flex; align-items: flex-start; gap: 0.6rem; margin-top: var(--space-3); }
+.enquiry-consent input { width: 22px; height: 22px; flex-shrink: 0; margin-top: 0.15rem; }
+.enquiry-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.enquiry-actions .send-status { margin: 0; }
+@media (max-width: 600px) {
+  .enquiry-form { padding: var(--space-3) var(--space-2); }
+}
 
 .field-label { display: block; font-weight: 700; margin-bottom: 0.35rem; text-wrap: balance; }
 .letter-textarea {
@@ -860,7 +926,28 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
   border-top: 3px dashed rgba(244,239,225,0.25);
 }
 .site-footer .container { display: flex; flex-direction: column; gap: var(--space-2); }
+/* leave clear space under the last footer line for the fixed back-to-top
+   button (48px + its 1rem inset), so it never sits on top of the text */
+.site-footer { padding-bottom: calc(var(--space-3) + 64px); }
+.footer-brand-row {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
 .footer-logo-placeholder { opacity: 0.95; }
+.footer-links { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.footer-link-btn {
+  display: inline-flex; align-items: center;
+  min-height: 36px;
+  padding: 0.3rem 1rem;
+  border: 1px solid rgba(244,239,225,0.5);
+  border-radius: 999px;
+  color: var(--navy-text);
+  font-size: 0.9rem; font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.footer-link-btn:hover { background: rgba(244,239,225,0.12); }
+.footer-link-btn:focus-visible { outline: 2px solid var(--navy-text); outline-offset: 2px; }
 .footer-logo-placeholder img { filter: brightness(0) invert(1) opacity(0.9); }
 .footer-legal { font-size: 0.9rem; opacity: 0.85; max-width: 46rem; }
 .footer-meta { display: flex; flex-wrap: wrap; gap: var(--space-3); font-size: 0.85rem; opacity: 0.8; font-family: var(--font-type); }
@@ -893,7 +980,9 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 :root[data-theme="western"] .crisis-box h3,
 :root[data-theme="western"] .gate-panel h3 { font-family: var(--font-display); text-transform: none; letter-spacing: 0; font-style: italic; }
 :root[data-theme="western"] .choice-card:has(input:checked) { background: #f3ece5; border-color: var(--brown); box-shadow: 0 0 0 2px var(--brown) inset; }
-:root[data-theme="western"] .field input { border-radius: 2px; border-bottom: 1px solid var(--line); }
+:root[data-theme="western"] .field input,
+:root[data-theme="western"] .field select,
+:root[data-theme="western"] .field textarea { border-radius: 2px; border-bottom: 1px solid var(--line); }
 :root[data-theme="western"] .site-header { border-bottom-style: solid; }
 :root[data-theme="western"] .nav-menu { border-bottom-style: solid; }
 :root[data-theme="western"] .site-footer { border-top-style: solid; }
@@ -985,8 +1074,11 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
 
 .home-teasers {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-3);
+}
+@media (max-width: 700px) {
+  .home-teasers { grid-template-columns: 1fr; }
 }
 .teaser-card {
   display: block;
@@ -1154,7 +1246,7 @@ section { padding: var(--space-5) 0; scroll-margin-top: 88px; }
      display:none on the specific known siblings collapses their height
      to zero instead, so the card is simply the first thing in normal
      flow and paginates correctly on its own if it runs past one page. */
-  .site-header, .site-footer,
+  .site-header, .site-footer, .back-to-top,
   #wizard-panel-wrap > .section-title,
   #wizard-panel-wrap > .section-subtitle,
   .wizard-progress-track, .wizard-progress-text,

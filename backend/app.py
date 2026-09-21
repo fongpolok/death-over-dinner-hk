@@ -27,7 +27,10 @@ from flask import Flask, Response, jsonify, request, send_from_directory
 
 from .config import Config
 from .logging_setup import configure_logging
-from .mailer import EmailSendError, send_invitation_email
+from .mailer import EmailSendError, send_enquiry_email, send_invitation_email
+
+ENQUIRY_TYPES = {"general", "dinner", "education", "partnership", "volunteer"}
+ENQUIRY_MAX_MESSAGE_CHARS = 5000
 
 
 def create_app(config: Config | None = None) -> Flask:
@@ -91,6 +94,46 @@ def create_app(config: Config | None = None) -> Flask:
                 dinner_title=payload.get("dinnerTitle", ""),
                 letter_text=payload.get("letter_text", ""),
                 logger=logger,
+            )
+        except EmailSendError:
+            return jsonify({"status": "send_failed"}), 502
+
+        return jsonify({"status": "sent"}), 200
+
+    @app.post("/api/enquiry")
+    def enquiry() -> Response:
+        payload = request.get_json(silent=True)
+        if not isinstance(payload, dict):
+            return jsonify({"error": "expected a JSON object"}), 400
+
+        name = str(payload.get("name") or "").strip()[:200]
+        email = str(payload.get("email") or "").strip()[:254]
+        phone = str(payload.get("phone") or "").strip()[:50]
+        enquiry_type = str(payload.get("type") or "general").strip()
+        message_text = str(payload.get("message") or "").strip()
+
+        if not name or "@" not in email or not message_text:
+            return jsonify({"error": "name, a valid email and a message are required"}), 400
+        if len(message_text) > ENQUIRY_MAX_MESSAGE_CHARS:
+            return jsonify({"error": "message too long"}), 400
+        if enquiry_type not in ENQUIRY_TYPES:
+            enquiry_type = "general"
+
+        # Always logged: this is the record a coordinator follows up from
+        # whether or not an inbox is configured.
+        logger.info(
+            "enquiry type=%s configured=%s payload=%s",
+            enquiry_type, config.is_enquiry_email_configured,
+            json.dumps({"name": name, "email": email, "phone": phone, "message": message_text}, ensure_ascii=False),
+        )
+
+        if not config.is_enquiry_email_configured:
+            return jsonify({"status": "logged_not_configured"}), 200
+
+        try:
+            send_enquiry_email(
+                config, name=name, email=email, phone=phone,
+                enquiry_type=enquiry_type, message_text=message_text, logger=logger,
             )
         except EmailSendError:
             return jsonify({"status": "send_failed"}), 502

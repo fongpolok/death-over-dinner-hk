@@ -57,6 +57,10 @@ class Config:
     smtp_from_email: str = os.environ.get("DOD_SMTP_FROM_EMAIL", "")
     smtp_from_name: str = os.environ.get("DOD_SMTP_FROM_NAME", "三渡棧 Mementos")
 
+    # Where contact-page enquiries are emailed. Unset = enquiries are only
+    # logged (same honest degrade as invitations).
+    enquiry_to_email: str = os.environ.get("DOD_ENQUIRY_TO_EMAIL", "")
+
     @property
     def log_file_path(self) -> Path:
         return self.log_dir / self.log_file_name
@@ -64,3 +68,7 @@ class Config:
     @property
     def is_email_configured(self) -> bool:
         return bool(self.smtp_host and self.smtp_user and self.smtp_password and self.smtp_from_email)
+
+    @property
+    def is_enquiry_email_configured(self) -> bool:
+        return self.is_email_configured and bool(self.enquiry_to_email)
