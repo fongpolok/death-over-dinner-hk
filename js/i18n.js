@@ -70,7 +70,7 @@ window.DOD.I18N = {
     "about.mission.title": "我們的信念",
     "about.mission.body": "生死教育不應該只是講座與宣傳單張。我們相信，最真實的生死對話，發生在一張飯桌上——在熟悉的人之間，配著一頓飯的時間，慢慢展開。",
     "about.team.title": "我們的團隊",
-    "about.team.body": "由生死教育顧問、社工及餐飲夥伴組成的小型團隊，正在籌備當中。團隊介紹將於稍後公佈。",
+    "about.team.body": "由生死教育顧問、社工及餐飲夥伴組成的團隊，正在籌備當中。團隊介紹將於稍後公佈。",
 
     /* ---------------------------------- Service ---------------------------------- */
     "service.pageTitle": "服務",
@@ -514,7 +514,7 @@ window.DOD.I18N = {
     "about.mission.title": "What We Believe",
     "about.mission.body": "Death education shouldn't only be a lecture and a leaflet. We believe the most honest conversations about death happen at a dinner table, among people who already know each other, over the unhurried span of a meal.",
     "about.team.title": "Our Team",
-    "about.team.body": "A small team of death-education consultants, social workers and catering partners is coming together. A full introduction is on its way.",
+    "about.team.body": "A team of death-education consultants, social workers and catering partners is coming together. A full introduction is on its way.",
 
     "service.pageTitle": "Service",
     "service.hero.title": "How We Help You Plan a Death Over Dinner",
